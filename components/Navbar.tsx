@@ -6,21 +6,7 @@ import Image from "next/image";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import NavLink from "./NavLink";
 import MenuOverlay from "./MenuOverlay";
-
-const NavLinks = [
-  {
-    title: "About",
-    path: "#about",
-  },
-  {
-    title: "Projects",
-    path: "#projects",
-  },
-  {
-    title: "Contact",
-    path: "#contact",
-  },
-];
+import { navLinks } from "@/data";
 
 const Navbar = () => {
   const [navOpen, setNavOpen] = useState(false);
@@ -53,7 +39,7 @@ const Navbar = () => {
         </div>
         <div className="menu hidden md:block md:w-auto">
           <ul className="flex p-4 md:p-0 md:flex-row md:space-x-8">
-            {NavLinks.map((link) => (
+            {navLinks.map((link) => (
               <li key={link.title}>
                 <NavLink href={link.path} title={link.title} />
               </li>
@@ -61,7 +47,7 @@ const Navbar = () => {
           </ul>
         </div>
       </div>
-      {navOpen && <MenuOverlay links={NavLinks} />}
+      {navOpen && <MenuOverlay links={navLinks} />}
     </nav>
   );
 };

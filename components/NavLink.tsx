@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { type NavLinkProps } from "@/types";
 
-const NavLink = ({ href, title }: { href: string; title: string }) => {
+const NavLink = ({ href, title }: NavLinkProps) => {
   return (
     <Link
       href={href}
