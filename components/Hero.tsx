@@ -2,12 +2,18 @@
 
 import Image from "next/image";
 import { TypeAnimation } from "react-type-animation";
+import { motion } from "framer-motion";
 
 const Hero = () => {
   return (
     <section>
       <div className="grid grid-cols-1 sm:grid-cols-12">
-        <div className="col-span-7 place-self-center text-center sm:text-left">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="col-span-7 place-self-center text-center sm:text-left"
+        >
           <h1 className="text-white mb-5 text-4xl sm:text-5xl lg:text-6xl font-bold">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6347] via-[#FFA07A] to-[#FFD700]">
               Hello, I'm{" "}
@@ -27,10 +33,8 @@ const Hero = () => {
             />
           </h1>
           <p className="text-[#7FC7D9] text-base sm:text-lg lg:text-xl">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maxime
-            incidunt excepturi architecto impedit numquam? Facere veniam rem
-            reiciendis asperiores amet vel neque, odio sunt veritatis qui
-            sapiente magni, dolorum perferendis!
+            Welcome! Thank you for visiting my website. Hope you find something
+            interesting from here {":)"}
           </p>
           <div className="mt-4">
             <button className="px-7 py-3 rounded-full mr-5 text-white bg-gradient-to-br from-[#FF6347] via-[#FFA07A] to-[#FFD700] hover:bg-slate-200 w-full sm:w-fit">
@@ -42,7 +46,7 @@ const Hero = () => {
               </span>
             </button>
           </div>
-        </div>
+        </motion.div>
         <div className="col-span-5 place-self-center mt-4 lg:mt-0">
           <div className="bg-[#212121] rounded-full w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] relative">
             <Image

@@ -1,12 +1,12 @@
 import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import AboutMe from "@/components/AboutMe";
-import Image from "next/image";
+import Work from "@/components/Work";
 
 export default function Home() {
   return (
     <main
-      className="flex min-h-screen flex-col bg-[#121212]
+      className="flex min-h-screen flex-col bg-[#f0f0f0] dark:bg-[#121212]
       "
     >
       <Navbar />
@@ -14,6 +14,8 @@ export default function Home() {
         <Hero />
         <hr className="block sm:hidden border border-slate-800 my-7" />
         <AboutMe />
+        <hr className="block sm:hidden border border-slate-800 my-5" />
+        <Work />
       </div>
     </main>
   );

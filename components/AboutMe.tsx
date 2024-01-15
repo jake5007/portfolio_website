@@ -2,18 +2,15 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { tabData } from "@/data";
+import { aboutTabs } from "@/data";
 import TabBtn from "./TabBtn";
 
 const AboutMe = () => {
   const [currTab, setCurrTab] = useState("skills");
 
   return (
-    <section id="about" className="sm:mt-10">
-      <div
-        className="flex flex-col md:flex-row  
-        gap-10 lg:gap-16 md:items-start w-full"
-      >
+    <section id="about" className="sm:mt-8">
+      <div className="md:grid md:grid-cols-2 gap-8 items-center py-8 px-4 xl:gap-16">
         <Image
           src="/images/website-image.svg"
           alt="about image"
@@ -21,9 +18,11 @@ const AboutMe = () => {
           height={500}
         />
 
-        <div className="flex flex-col text-white h-full text-left">
-          <h1 className="text-2xl md:text-3xl font-bold text-left">About Me</h1>
-          <p className="mt-3 text-slate-300">
+        <div className="flex flex-col text-white h-full text-left mt-6 md:mt-0">
+          <h1 className="text-2xl md:text-3xl font-bold text-center sm:text-left">
+            About Me
+          </h1>
+          <p className="mt-3 text-slate-300 text-center sm:text-left">
             I am a web developer with a passion for diving into new challenges.
             I have working experience with JavaScript, Vue, HTML, CSS, and Git.
             However, I've pursued learning React, Redux, Node.js, Next.js, and
@@ -31,8 +30,8 @@ const AboutMe = () => {
             an opportunity to expand my knowledge and contribute to
             collaborative projects.
           </p>
-          <div className="flex gap-3 justify-start mt-7">
-            {tabData.map((tab) => (
+          <div className="flex gap-3 justify-center sm:justify-start mt-7">
+            {aboutTabs.map((tab) => (
               <TabBtn
                 key={tab.id}
                 active={currTab === tab.id}
@@ -44,7 +43,7 @@ const AboutMe = () => {
           </div>
           <div className="mt-5">
             <ul className="list-disc pl-4">
-              {tabData
+              {aboutTabs
                 .find((tab) => currTab === tab.id)
                 ?.content?.map((item, idx) => (
                   <li key={idx}>{item}</li>

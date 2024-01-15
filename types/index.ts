@@ -10,5 +10,13 @@ export type MenuOverlayProps = {
 export type TabBtnProps = {
   active: boolean;
   onTabChange: () => void;
+  customTextClasses?: string;
   children: React.ReactNode;
+};
+
+export type CardProps = {
+  title: string;
+  desc: string;
+  imgSrc: string;
+  gitURL: string;
 };
