@@ -1,13 +1,7 @@
-"use client";
-
 import Image from "next/image";
-import { useState } from "react";
-import { aboutTabs } from "@/data";
-import TabBtn from "./TabBtn";
+import AboutMeTabs from "./AboutMeTabs";
 
 const AboutMe = () => {
-  const [currTab, setCurrTab] = useState("skills");
-
   return (
     <section id="about" className="sm:mt-8">
       <div className="md:grid md:grid-cols-2 gap-8 items-center py-8 px-4 xl:gap-16">
@@ -30,26 +24,7 @@ const AboutMe = () => {
             an opportunity to expand my knowledge and contribute to
             collaborative projects.
           </p>
-          <div className="flex gap-3 justify-center sm:justify-start mt-7">
-            {aboutTabs.map((tab) => (
-              <TabBtn
-                key={tab.id}
-                active={currTab === tab.id}
-                onTabChange={() => setCurrTab((prev) => tab.id)}
-              >
-                {tab.title}
-              </TabBtn>
-            ))}
-          </div>
-          <div className="mt-5">
-            <ul className="list-disc pl-4">
-              {aboutTabs
-                .find((tab) => currTab === tab.id)
-                ?.content?.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-            </ul>
-          </div>
+          <AboutMeTabs />
         </div>
       </div>
     </section>

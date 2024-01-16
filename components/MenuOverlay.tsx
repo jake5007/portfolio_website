@@ -1,5 +1,5 @@
 import NavLink from "./NavLink";
-import { type MenuOverlayProps } from "@/types";
+import type { MenuOverlayProps } from "@/types";
 
 const MenuOverlay = ({ links }: MenuOverlayProps) => {
   return (

@@ -1,4 +1,4 @@
-import { type TabBtnProps } from "@/types";
+import type { TabBtnProps } from "@/types";
 
 const TabBtn = ({
   active,

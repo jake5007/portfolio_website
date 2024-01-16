@@ -2,6 +2,8 @@ import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import AboutMe from "@/components/AboutMe";
 import Work from "@/components/Work";
+import Hobbies from "@/components/Hobbies";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -16,6 +18,10 @@ export default function Home() {
         <AboutMe />
         <hr className="block sm:hidden border border-slate-800 my-5" />
         <Work />
+        <hr className="block sm:hidden border border-slate-800 my-5" />
+        <Hobbies />
+        {/* Contact Section */}
+        <Footer />
       </div>
     </main>
   );

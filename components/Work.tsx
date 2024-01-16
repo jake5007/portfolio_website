@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import TabBtn from "./TabBtn";
 import Card from "./Card";
 import { workTabs, workList } from "@/data";
@@ -36,6 +37,7 @@ const Work = () => {
               title={work.title}
               desc={work.desc}
               imgSrc={work.imgSrc}
+              liveURL={work.liveURL}
               gitURL={work.gitURL}
             />
           ))}
