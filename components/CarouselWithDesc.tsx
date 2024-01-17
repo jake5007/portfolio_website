@@ -1,4 +1,4 @@
-import { CarouselWithDesc } from "@/types";
+import type { CarouselWithDescProps } from "@/types";
 
 const CarouselWithDesc = ({
   id,
@@ -6,7 +6,7 @@ const CarouselWithDesc = ({
   desc,
   image,
   isInView,
-}: CarouselWithDesc) => {
+}: CarouselWithDescProps) => {
   const evenImgGridStyle =
     id % 2 === 0 ? `md:row-start-2 md:col-start-2 md:col-end-4` : "";
   const evenDescGridStyle =
@@ -42,7 +42,7 @@ const CarouselWithDesc = ({
         style={{
           transform: isInView ? "none" : "translateY(-100px)",
           opacity: isInView ? 1 : 0,
-          transition: "all 0.7s cubic-bezier(0.17, 0.55, 0.55, 1) 0.6s",
+          transition: "all 0.7s cubic-bezier(0.17, 0.55, 0.55, 1) 0.8s",
         }}
       >
         <h1 className="dark:text-white text-xl lg:text-2xl capitalize font-bold">

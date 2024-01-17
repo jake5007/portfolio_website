@@ -1,5 +1,3 @@
-import type { ComponentPropsWithoutRef } from "react";
-
 export type NavLinkProps = {
   href: string;
   title: string;
@@ -24,10 +22,18 @@ export type CardProps = {
   gitURL: string;
 };
 
-export type CarouselWithDesc = {
+export type CarouselWithDescProps = {
   id: number;
   title: string;
   desc: string;
   image: string[];
   isInView: boolean;
+};
+
+export type InputContainerProps = {
+  label: string;
+  name: string;
+  type?: string;
+  placeholder: string;
+  textarea?: boolean;
 };

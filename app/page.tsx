@@ -3,12 +3,13 @@ import Navbar from "@/components/Navbar";
 import AboutMe from "@/components/AboutMe";
 import Work from "@/components/Work";
 import Hobbies from "@/components/Hobbies";
+import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
     <main
-      className="flex min-h-screen flex-col bg-[#f0f0f0] dark:bg-[#121212]
+      className="flex min-h-screen flex-col bg-[#121212]
       "
     >
       <Navbar />
@@ -20,7 +21,8 @@ export default function Home() {
         <Work />
         <hr className="block sm:hidden border border-slate-800 my-5" />
         <Hobbies />
-        {/* Contact Section */}
+        <hr className="block sm:hidden border border-slate-800 my-5" />
+        <Contact />
         <Footer />
       </div>
     </main>

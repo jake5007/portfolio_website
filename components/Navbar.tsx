@@ -40,7 +40,7 @@ const Navbar = () => {
           >
             <Image src="/images/logo.svg" alt="logo" width={85} height={45} />
           </Link>
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             {darkMode ? (
               <MoonIcon className="w-5 h-5 text-white" />
             ) : (
@@ -62,7 +62,7 @@ const Navbar = () => {
                 } inline-block h-4 w-4 transform rounded-full bg-white transition`}
               />
             </Switch>
-          </div>
+          </div> */}
         </div>
 
         <div className="mobile-menu block md:hidden">
