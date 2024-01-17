@@ -19,9 +19,9 @@ const AboutMe = () => {
           <p className="mt-3 text-slate-300 text-center sm:text-left">
             I am a web developer with a passion for diving into new challenges.
             I have working experience with JavaScript, Vue, HTML, CSS, and Git.
-            However, I've pursued learning React, Redux, Node.js, Next.js, and
-            Figma on my own. I am a quick learner and a team player, looking for
-            an opportunity to expand my knowledge and contribute to
+            However, I&apos;ve pursued learning React, Redux, Node.js, Next.js,
+            and Figma on my own. I am a quick learner and a team player, looking
+            for an opportunity to expand my knowledge and contribute to
             collaborative projects.
           </p>
           <AboutMeTabs />
