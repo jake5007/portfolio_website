@@ -13,24 +13,21 @@ const Contact = () => {
   const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const data = {
+    const formData = {
       email: e.target.email.value,
       subject: e.target.subject.value,
       message: e.target.message.value,
     };
-    const JSONdata = JSON.stringify(data);
-    const endpoint = "/api/send";
 
-    const options = {
+    const response = await fetch("/api/send", {
       method: "POST",
+      body: JSON.stringify(formData),
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSONdata,
-    };
+    });
 
-    const response = await fetch(endpoint, options);
-    const resData = await response.json();
+    const data = await response.json();
 
     if (response.status === 200) {
       console.log("message sent");
@@ -61,14 +58,16 @@ const Contact = () => {
         </Link>
       </div>
       {emailSubmitted ? (
-        <p className="text-green-500 text-sm mt-2">Email sent successfully!</p>
+        <p className="text-green-500 text-lg text-center mt-5">
+          Email sent successfully!
+        </p>
       ) : (
         <form
           className="flex flex-col items-center w-full"
           onSubmit={handleSubmit}
         >
           <InputContainer
-            label="E-mail"
+            label="Your Email"
             name="email"
             type="email"
             placeholder="abcd@gmail.com"

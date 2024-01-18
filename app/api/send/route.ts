@@ -1,26 +1,47 @@
-import EmailTemplate from "@/components/EmailTemplate";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
+import type { ContactFormData } from "@/types";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export async function POST(req: Request) {
+  const body = await req.json();
 
-export async function POST(req: Request, res: Response) {
-  const { email, subject, message } = await req.json();
-  console.log(email, subject, message);
+  return sendEmail(body)
+    .then(
+      () =>
+        new Response(JSON.stringify({ message: "Succeeded to send email" }), {
+          status: 200,
+        })
+    )
+    .catch((error) => {
+      console.error(error);
 
-  try {
-    const { data, error } = await resend.emails.send({
-      from: email,
-      to: ["hjchae5007@gmail.com"],
-      subject: subject,
-      react: EmailTemplate() as React.ReactElement,
+      return new Response(JSON.stringify({ message: "Failed to send email" }), {
+        status: 500,
+      });
     });
+}
 
-    if (error) {
-      return Response.json({ error });
-    }
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.AUTH_USER,
+    pass: process.env.AUTH_PASS,
+  },
+});
 
-    return Response.json({ data });
-  } catch (error) {
-    return Response.json({ error });
-  }
+async function sendEmail({ email, subject, message }: ContactFormData) {
+  const mailData = {
+    to: process.env.AUTH_USER,
+    subject: `[From Portfolio] ${subject}`,
+    from: email,
+    html: `
+      <h1>${subject}</h1>
+      <p>${message}</p>
+      </br>
+      <p><strong>From:</strong> ${email}</p>
+      `,
+  };
+
+  return transporter.sendMail(mailData);
 }

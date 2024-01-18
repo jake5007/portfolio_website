@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { TypeAnimation } from "react-type-animation";
 import { motion } from "framer-motion";
@@ -39,14 +40,16 @@ const Hero = () => {
             interesting from here {":)"}
           </p>
           <div className="mt-4">
-            <button className="px-7 py-3 rounded-full mr-5 text-white bg-gradient-to-br from-[#FF6347] via-[#FFA07A] to-[#FFD700] hover:bg-slate-200 w-full sm:w-fit">
-              Hire Me
-            </button>
-            <button className="px-1 py-1 mt-4 rounded-full text-white bg-gradient-to-br from-[#FF6347] via-[#FFA07A] to-[#FFD700] w-full sm:w-fit">
+            <Link href="#contact">
+              <button className="px-8 py-3 mb-4 rounded-full text-white bg-gradient-to-br from-[#FF6347] via-[#FFA07A] to-[#FFD700] hover:bg-slate-200 w-full sm:w-fit">
+                Hire Me
+              </button>
+            </Link>
+            {/* <button className="px-1 py-1 mt-4 rounded-full text-white bg-gradient-to-br from-[#FF6347] via-[#FFA07A] to-[#FFD700] w-full sm:w-fit">
               <span className="px-6 py-2 block rounded-full bg-[#121212] hover:bg-slate-800">
                 Download CV
               </span>
-            </button>
+            </button> */}
           </div>
         </motion.div>
         <div className="col-span-5 place-self-center mt-4 lg:mt-0">

@@ -37,3 +37,9 @@ export type InputContainerProps = {
   placeholder: string;
   textarea?: boolean;
 };
+
+export type ContactFormData = {
+  email: string;
+  subject: string;
+  message: string;
+};
