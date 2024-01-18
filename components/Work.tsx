@@ -21,7 +21,7 @@ const Work = () => {
             key={tab.id}
             active={currTab === tab.id}
             onTabChange={() => setCurrTab((prev) => tab.id)}
-            customTextClasses="text-xl decoration-4 underline-offset-8"
+            customTextClasses="text-lg sm:text-xl decoration-2 sm:decoration-4 underline-offset-4 sm:underline-offset-8"
           >
             {tab.title}
           </TabBtn>
