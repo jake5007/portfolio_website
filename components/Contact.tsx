@@ -37,7 +37,7 @@ const Contact = () => {
 
   return (
     <section id="contact" className="mt-10">
-      <div className="flex justify-center gap-5 w-full">
+      <div className="flex justify-center gap-5 w-full my-5">
         <Link href="https://github.com/jake5007" target="_blank">
           <Image
             src={githubIcon}

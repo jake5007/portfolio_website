@@ -13,7 +13,7 @@ const TabBtn = ({
   return (
     <button onClick={onTabChange}>
       <p
-        className={`mr-3 font-semibold ${customTextClasses} ${textStyles} hover:text-white`}
+        className={`font-semibold ${customTextClasses} ${textStyles} hover:text-white`}
       >
         {children}
       </p>
