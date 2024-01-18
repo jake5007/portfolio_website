@@ -15,7 +15,7 @@ const Work = () => {
         My Work
       </h1>
 
-      <div className="flex gap-3 justify-center my-6">
+      <div className="flex gap-4 justify-center my-6">
         {workTabs.map((tab) => (
           <TabBtn
             key={tab.id}
