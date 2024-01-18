@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { CarouselWithDescProps } from "@/types";
 
 const CarouselWithDesc = ({
@@ -26,10 +27,13 @@ const CarouselWithDesc = ({
       >
         {image.map((item, idx) => (
           <div key={idx} className="carousel-item max-w-[500px]">
-            <img
+            <Image
               src={item}
               alt="image"
-              className={`rounded-box  
+              width={0}
+              height={0}
+              sizes="100vw"
+              className={`w-full h-auto rounded-box  
                 shadow-[1px_1px_8px_3px_rgb(0,0,0,0.5)]
               ${idx % 2 === 0 ? "rotate-6" : "-rotate-6"}`}
             />

@@ -1,5 +1,6 @@
-import type { CardProps } from "@/types";
 import Link from "next/link";
+import Image from "next/image";
+import type { CardProps } from "@/types";
 import {
   ArrowTopRightOnSquareIcon,
   CodeBracketIcon,
@@ -9,10 +10,13 @@ const Card = ({ title, desc, imgSrc, liveURL, gitURL }: CardProps) => {
   return (
     <div className="card card-compact bg-base-100 shadow-xl h-full dark:bg-[#181818]">
       <figure className="relative h-[55%] group">
-        <img
+        <Image
           src={imgSrc}
           alt={title}
-          className="object-cover transition duration-200 group-hover:ease-in group-hover:scale-110"
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="w-full h-auto object-cover transition duration-200 group-hover:ease-in group-hover:scale-110"
         />
         <div
           className="group-hover:flex justify-center items-center gap-3 hidden 
