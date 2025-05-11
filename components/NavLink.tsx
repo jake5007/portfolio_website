@@ -5,7 +5,7 @@ const NavLink = ({ href, title }: NavLinkProps) => {
   return (
     <Link
       href={href}
-      className="block py-2 pl-2 pr-3 sm:text-lg lg:text-xl rounded text-gray-400 hover:text-white"
+      className="block py-2 pl-2 pr-3 sm:text-lg lg:text-xl rounded hover:opacity-80 transition-opacity"
     >
       {title}
     </Link>

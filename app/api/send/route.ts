@@ -2,22 +2,32 @@ import nodemailer from "nodemailer";
 import type { ContactFormData } from "@/types";
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  try {
+    const body = await req.json();
 
-  return sendEmail(body)
-    .then(
-      () =>
-        new Response(JSON.stringify({ message: "Succeeded to send email" }), {
-          status: 200,
-        })
-    )
-    .catch((error) => {
-      console.error(error);
+    const { email, subject, message } = body;
 
-      return new Response(JSON.stringify({ message: "Failed to send email" }), {
-        status: 500,
-      });
+    if (!email || !subject || !message || !validateEmail(email)) {
+      return new Response(
+        JSON.stringify({ message: "Invalid email or missing fields" }),
+        { status: 400 }
+      );
+    }
+
+    await sendEmail({ email, subject, message });
+
+    return new Response(
+      JSON.stringify({ message: "Email sent successfully" }),
+      {
+        status: 200,
+      }
+    );
+  } catch (err) {
+    console.error("Error sending email:", err);
+    return new Response(JSON.stringify({ message: "Failed to send email" }), {
+      status: 500,
     });
+  }
 }
 
 const transporter = nodemailer.createTransport({
@@ -33,8 +43,8 @@ const transporter = nodemailer.createTransport({
 async function sendEmail({ email, subject, message }: ContactFormData) {
   const mailData = {
     to: process.env.AUTH_USER,
-    subject: `[From Portfolio] ${subject}`,
     from: email,
+    subject: `[From Portfolio] ${subject}`,
     html: `
       <h1>${subject}</h1>
       <p>${message}</p>
@@ -44,4 +54,8 @@ async function sendEmail({ email, subject, message }: ContactFormData) {
   };
 
   return transporter.sendMail(mailData);
+}
+
+function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }

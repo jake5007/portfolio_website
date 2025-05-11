@@ -11,7 +11,7 @@ const Hobbies = () => {
 
   return (
     <section id="hobbies" className="sm:mt-10">
-      <h1 className="text-white text-center text-2xl md:text-3xl font-bold">
+      <h1 className="text-primary text-center text-2xl md:text-3xl font-bold">
         My Hobbies
       </h1>
 

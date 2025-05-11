@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import InputContainer from "./InputContainer";
-import githubIcon from "@/public/images/github.svg";
-import linkedInIcon from "@/public/images/linkedin.svg";
+import GithubIcon from "@/public/images/github.svg";
+import LinkedInIcon from "@/public/images/linkedin.svg";
 
 const Contact = () => {
   const [emailSubmitted, setEmailSubmitted] = useState(false);
@@ -37,28 +36,16 @@ const Contact = () => {
 
   return (
     <section id="contact" className="mt-10">
-      <div className="flex justify-center gap-5 w-full my-5">
+      <div className="flex justify-center gap-8 w-full my-5">
         <Link href="https://github.com/jake5007" target="_blank">
-          <Image
-            src={githubIcon}
-            alt="github"
-            width={35}
-            height={35}
-            className="dark:invert"
-          />
+          <GithubIcon className="size-10 text-base-content hover:opacity-80 transition-opacity duration-200" />
         </Link>
         <Link href="https://www.linkedin.com/in/hyunjinchae/" target="_blank">
-          <Image
-            src={linkedInIcon}
-            alt="linkedIn"
-            width={35}
-            height={35}
-            className="dark:invert"
-          />
+          <LinkedInIcon className="size-10 text-base-content hover:opacity-80 transition-opacity duration-200" />
         </Link>
       </div>
       {emailSubmitted ? (
-        <p className="text-green-500 text-lg text-center mt-5">
+        <p className="text-primary text-xl text-center mt-10">
           Email sent successfully!
         </p>
       ) : (
@@ -86,9 +73,9 @@ const Contact = () => {
           />
           <button
             type="submit"
-            className="w-full md:max-w-[650px] rounded-lg py-3 
-          bg-orange-500 hover:bg-orange-400 text-white
-          tracking-wider"
+            className="btn btn-primary w-full md:max-w-[650px] rounded-lg 
+            hover:opacity-80 transition-opacity duration-200
+            tracking-wider font-semibold text-lg text-center"
           >
             Send
           </button>

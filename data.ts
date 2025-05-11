@@ -22,13 +22,14 @@ export const aboutTabs = [
     id: "skills",
     title: "Skills",
     content: [
+      "HTML, CSS",
+      "JavaScript, TypeScript",
       "React",
       "Vue",
       "Next.js",
-      "JavaScript, TypeScript",
-      "HTML, CSS",
-      "Node.js",
-      "MongoDB",
+      "Node/Express",
+      "RDBMS (PostgreSQL, Oracle)",
+      "NoSQL (MongoDB)",
     ],
   },
   {
@@ -44,8 +45,9 @@ export const aboutTabs = [
     id: "experience",
     title: "Experience",
     content: [
-      "Credit Assessor, at Goryo Savings Bank",
+      "Credit Analyst, at Goryo Savings Bank",
       "Frontend Web Developer, at SCADAICT",
+      "Software Developer, at WITH Info",
     ],
   },
   {
@@ -53,8 +55,8 @@ export const aboutTabs = [
     title: "Languages",
     content: [
       "Korean - Native",
-      "English - Upper Intermediate",
-      "German - Beginner",
+      "English - C1 (Advanced), IELTS GT: Overall 7.0",
+      "German - A1 (Beginner)",
     ],
   },
 ];
@@ -76,6 +78,15 @@ export const workTabs = [
 
 export const workList = [
   {
+    id: 0,
+    category: ["all", "react"],
+    title: "Online Shop",
+    desc: "Online shop for buying products",
+    imgSrc: "/images/work/online_shop.png",
+    gitURL: "https://github.com/jake5007/online-shop-pern",
+    liveURL: "https://online-shop-pern.onrender.com/",
+  },
+  {
     id: 1,
     category: ["all", "react"],
     title: "Memory Board",
@@ -87,7 +98,7 @@ export const workList = [
   {
     id: 2,
     category: ["all", "react"],
-    title: "Meme Maker",
+    title: "Meme Generator",
     desc: "Make memes using randomly fetched pictures",
     imgSrc: "/images/work/meme_maker.png",
     gitURL: "https://github.com/jake5007/meme_maker",
@@ -189,5 +200,43 @@ export const hobbies = [
       "/images/hobbies/travel/11.jpg",
       "/images/hobbies/travel/12.jpg",
     ],
+  },
+];
+
+export const themes = [
+  {
+    name: "pastel",
+    label: "Pastel",
+    colors: ["#ffd8d8", "#b7e4c7", "#d8b4fe"],
+  },
+  {
+    name: "night",
+    label: "Night",
+    colors: ["#0F172A", "#334155", "#64748B"],
+  },
+  {
+    name: "autumn",
+    label: "Autumn",
+    colors: ["#D8B4A0", "#D27548", "#BA4A00"],
+  },
+  {
+    name: "forest",
+    label: "Forest",
+    colors: ["#171212", "#2B4C3F", "#6BAA75"],
+  },
+  {
+    name: "coffee",
+    label: "Coffee",
+    colors: ["#20161F", "#A67C58", "#807666"],
+  },
+  {
+    name: "luxury",
+    label: "Luxury",
+    colors: ["#171618", "#B6862D", "#E2C697"],
+  },
+  {
+    name: "valentine",
+    label: "Valentine",
+    colors: ["#E96D7B", "#FF8FAB", "#FFB3C6"],
   },
 ];

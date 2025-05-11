@@ -15,8 +15,8 @@ const Hero = () => {
           transition={{ duration: 0.5 }}
           className="col-span-7 place-self-center text-center sm:text-left"
         >
-          <h1 className="text-white mb-5 text-4xl sm:text-5xl lg:text-6xl font-bold">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6347] via-[#FFA07A] to-[#FFD700]">
+          <h1 className="mb-5 text-4xl sm:text-5xl lg:text-6xl font-bold">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
               Hello, I&apos;m{" "}
             </span>
             <br />
@@ -35,21 +35,16 @@ const Hero = () => {
               repeat={Infinity}
             />
           </h1>
-          <p className="text-[#7FC7D9] text-base sm:text-lg lg:text-xl">
+          <p className="text-base sm:text-lg lg:text-xl">
             Welcome! Thank you for visiting my website. Hope you find something
             interesting from here {":)"}
           </p>
           <div className="mt-4">
             <Link href="#contact">
-              <button className="px-8 py-3 mb-4 rounded-full text-white bg-gradient-to-br from-[#FF6347] via-[#FFA07A] to-[#FFD700] hover:bg-slate-200 w-full sm:w-fit">
+              <button className="px-8 py-3 mb-4 rounded-full text-base-content bg-gradient-to-br from-primary via-secondary to-accent hover:opacity-80 transition-opacity duration-200 w-full sm:w-fit">
                 Hire Me
               </button>
             </Link>
-            {/* <button className="px-1 py-1 mt-4 rounded-full text-white bg-gradient-to-br from-[#FF6347] via-[#FFA07A] to-[#FFD700] w-full sm:w-fit">
-              <span className="px-6 py-2 block rounded-full bg-[#121212] hover:bg-slate-800">
-                Download CV
-              </span>
-            </button> */}
           </div>
         </motion.div>
         <div className="col-span-5 place-self-center mt-4 lg:mt-0">

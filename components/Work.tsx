@@ -11,7 +11,7 @@ const Work = () => {
 
   return (
     <section id="work" className="sm:mt-5">
-      <h1 className="text-white text-center text-2xl md:text-3xl font-bold">
+      <h1 className="text-primary text-center text-2xl md:text-3xl font-bold">
         My Work
       </h1>
 
