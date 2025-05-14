@@ -19,7 +19,7 @@ const InputContainer = ({
           placeholder={placeholder}
           rows={4}
           className="textarea textarea-bordered textarea-primary border-2 rounded-xl 
-          w-full text-base-content bg-base-100 focus:outline-none text-lg"
+          w-full text-base-content bg-base-100 focus:outline-none text-lg resize-none"
         />
       ) : (
         <input
