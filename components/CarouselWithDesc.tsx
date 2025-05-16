@@ -49,10 +49,10 @@ const CarouselWithDesc = ({
           transition: "all 0.7s cubic-bezier(0.17, 0.55, 0.55, 1) 0.8s",
         }}
       >
-        <h1 className="dark:text-white text-xl lg:text-2xl capitalize font-bold">
+        <h1 className="text-xl lg:text-2xl capitalize font-bold">
           {id}. {title}
         </h1>
-        <p className="mt-2 dark:text-slate-300 text-lg">{desc}</p>
+        <p className="mt-2 text-lg">{desc}</p>
       </div>
     </>
   );

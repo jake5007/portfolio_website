@@ -13,7 +13,7 @@ const TabBtn = ({
   return (
     <button onClick={onTabChange}>
       <p
-        className={`relative inline-block font-semibold hover:opacity-80 transition-opacity duration-200 ${customTextClasses} ${
+        className={`relative inline-block font-semibold sm:hover:opacity-80 transition-opacity duration-200 ${customTextClasses} ${
           active ? "" : "text-base-content/80"
         }`}
       >

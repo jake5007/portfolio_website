@@ -8,7 +8,7 @@ import {
 
 const Card = ({ title, desc, imgSrc, liveURL, gitURL }: CardProps) => {
   return (
-    <div className="card card-compact bg-base-100 shadow-xl h-full dark:bg-[#181818]">
+    <div className="card card-compact bg-base-100 shadow-xl h-full">
       <figure className="relative h-[55%] group">
         <Image
           src={imgSrc}
@@ -34,9 +34,9 @@ const Card = ({ title, desc, imgSrc, liveURL, gitURL }: CardProps) => {
           </Link>
         </div>
       </figure>
-      <div className="card-body dark:bg-[#292929] rounded-b-2xl">
-        <h2 className="card-title xl:text-2xl dark:text-white">{title}</h2>
-        <p className="xl:text-lg dark:text-slate-400">{desc}</p>
+      <div className="card-body rounded-b-2xl">
+        <h2 className="card-title xl:text-2xl">{title}</h2>
+        <p className="xl:text-lg">{desc}</p>
       </div>
     </div>
   );
