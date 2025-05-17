@@ -37,7 +37,7 @@ const Hero = () => {
           </h1>
           <p className="text-base sm:text-lg lg:text-xl">
             Welcome! Thank you for visiting my website. Hope you find something
-            interesting from here {":)"}
+            interesting here {":)"}
           </p>
           <div className="mt-4">
             <Link href="#contact">
