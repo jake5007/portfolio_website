@@ -19,7 +19,7 @@ const AboutMe = () => {
           <p className="mt-3 text-center sm:text-left">
             I am a web developer with a passion for diving into new challenges.
             I have working experience with HTML, CSS, JavaScript, Vue and Oracle
-            DB. However, I&apos;ve pursued learning React, Redux, Node/Express,
+            DB. Additionally, I&apos;ve pursued learning React, Redux, Node/Express,
             Next.js, PostgreSQL, MongoDB, etc on my own. I am a quick learner
             and a team player, looking for an opportunity to expand my knowledge
             and contribute to collaborative projects.
