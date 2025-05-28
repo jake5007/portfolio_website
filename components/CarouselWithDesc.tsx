@@ -18,7 +18,7 @@ const CarouselWithDesc = ({
       <div
         className={`md:col-span-2 mt-5 carousel carousel-center 
         max-w-[1000px] p-4 space-x-4 bg-neutral rounded-box overflow-y-hidden 
-        ${evenImgGridStyle}`}
+        ${evenImgGridStyle} relative`}
         style={{
           transform: isInView ? "none" : "translateX(-200px)",
           opacity: isInView ? 1 : 0,

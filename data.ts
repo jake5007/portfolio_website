@@ -67,19 +67,19 @@ export const workTabs = [
     title: "All",
   },
   {
-    id: "react",
-    title: "React",
+    id: "frontend",
+    title: "Front-end",
   },
   {
-    id: "next.js",
-    title: "Next.js",
+    id: "fullstack",
+    title: "Full-stack",
   },
 ];
 
 export const workList = [
   {
     id: 0,
-    category: ["all", "react"],
+    category: ["all", "fullstack"],
     title: "Online Shop",
     desc: "Online shop for buying products",
     imgSrc: "/images/work/online_shop.png",
@@ -88,7 +88,7 @@ export const workList = [
   },
   {
     id: 1,
-    category: ["all", "react"],
+    category: ["all", "fullstack"],
     title: "Memory Board",
     desc: "Upload and share your valuable memories",
     imgSrc: "/images/work/memory_board.png",
@@ -97,7 +97,7 @@ export const workList = [
   },
   {
     id: 2,
-    category: ["all", "react"],
+    category: ["all", "frontend"],
     title: "Meme Generator",
     desc: "Make memes using randomly fetched pictures",
     imgSrc: "/images/work/meme_maker.png",
@@ -106,7 +106,7 @@ export const workList = [
   },
   {
     id: 3,
-    category: ["all", "next.js"],
+    category: ["all", "fullstack"],
     title: "Portfolio Website",
     desc: "My portfolio website",
     imgSrc: "/images/work/portfolio_website.png",
@@ -115,7 +115,7 @@ export const workList = [
   },
   {
     id: 4,
-    category: ["all", "react"],
+    category: ["all", "frontend"],
     title: "Space Tourism Website",
     desc: "Visit space tourism website",
     imgSrc: "/images/work/space_tourism.png",
@@ -124,7 +124,7 @@ export const workList = [
   },
   {
     id: 5,
-    category: ["all", "react"],
+    category: ["all", "frontend"],
     title: "Rock Paper Scissors Lizard Spock",
     desc: "Play Rock Paper Scissors Lizard Spock with computer",
     imgSrc: "/images/work/rpsls.png",
@@ -133,7 +133,7 @@ export const workList = [
   },
   {
     id: 6,
-    category: ["all", "react"],
+    category: ["all", "frontend"],
     title: "IP Adress Tracker",
     desc: "You can get the IP address locations by searching IP address",
     imgSrc: "/images/work/ip_address_tracker.png",
@@ -143,7 +143,7 @@ export const workList = [
 
   {
     id: 7,
-    category: ["all", "react"],
+    category: ["all", "frontend"],
     title: "Age Calculator",
     desc: "Write your dob and calculate your age",
     imgSrc: "/images/work/age_calculator.png",
@@ -155,7 +155,7 @@ export const workList = [
 
   {
     id: 8,
-    category: ["all", "react"],
+    category: ["all", "frontend"],
     title: "Advice Generator",
     desc: "You can get some advice randomly",
     imgSrc: "/images/work/advice_generator.png",
