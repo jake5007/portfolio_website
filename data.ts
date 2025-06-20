@@ -67,18 +67,31 @@ export const workTabs = [
     title: "All",
   },
   {
-    id: "frontend",
-    title: "Front-end",
+    id: "fullstack",
+    title: "Fullstack",
   },
   {
-    id: "fullstack",
-    title: "Full-stack",
+    id: "frontend",
+    title: "Frontend",
+  },
+  {
+    id: "backend",
+    title: "Backend",
   },
 ];
 
 export const workList = [
   {
     id: 0,
+    category: ["all", "backend"],
+    title: "Icebreaker API",
+    desc: "Simple public API to retrieve categorized or random ice-breaking questions",
+    imgSrc: "/images/work/icebreaker_api.png",
+    gitURL: "https://github.com/jake5007/icebreaker-api",
+    liveURL: "https://icebreaker-api-us13.onrender.com/docs/",
+  },
+  {
+    id: 1,
     category: ["all", "fullstack"],
     title: "Online Shop",
     desc: "Online shop for buying products",
@@ -87,7 +100,7 @@ export const workList = [
     liveURL: "https://online-shop-pern.onrender.com/",
   },
   {
-    id: 1,
+    id: 2,
     category: ["all", "fullstack"],
     title: "Memory Board",
     desc: "Upload and share your valuable memories",
@@ -96,7 +109,7 @@ export const workList = [
     liveURL: "https://memory-board.onrender.com",
   },
   {
-    id: 2,
+    id: 3,
     category: ["all", "frontend"],
     title: "Meme Generator",
     desc: "Make memes using randomly fetched pictures",
@@ -105,7 +118,7 @@ export const workList = [
     liveURL: "https://meme-maker-git-main-jake5007.vercel.app/",
   },
   {
-    id: 3,
+    id: 4,
     category: ["all", "fullstack"],
     title: "Portfolio Website",
     desc: "My portfolio website",
@@ -114,7 +127,7 @@ export const workList = [
     liveURL: "",
   },
   {
-    id: 4,
+    id: 5,
     category: ["all", "frontend"],
     title: "Space Tourism Website",
     desc: "Visit space tourism website",
@@ -123,7 +136,7 @@ export const workList = [
     liveURL: "https://space-tourism-website-jake5007.vercel.app/",
   },
   {
-    id: 5,
+    id: 6,
     category: ["all", "frontend"],
     title: "Rock Paper Scissors Lizard Spock",
     desc: "Play Rock Paper Scissors Lizard Spock with computer",
@@ -132,7 +145,7 @@ export const workList = [
     liveURL: "https://creative-dragon-ccbb55.netlify.app/",
   },
   {
-    id: 6,
+    id: 7,
     category: ["all", "frontend"],
     title: "IP Adress Tracker",
     desc: "You can get the IP address locations by searching IP address",
@@ -142,7 +155,7 @@ export const workList = [
   },
 
   {
-    id: 7,
+    id: 8,
     category: ["all", "frontend"],
     title: "Age Calculator",
     desc: "Write your dob and calculate your age",
@@ -154,7 +167,7 @@ export const workList = [
   },
 
   {
-    id: 8,
+    id: 9,
     category: ["all", "frontend"],
     title: "Advice Generator",
     desc: "You can get some advice randomly",
