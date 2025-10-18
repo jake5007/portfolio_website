@@ -82,7 +82,16 @@ export const workTabs = [
 
 export const workList = [
   {
-    id: 0,
+    id: 11,
+    category: ["all", "frontend"],
+    title: "Dessert List with Cart",
+    desc: "Take a look at mouthwatering desserts and add them to your cart",
+    imgSrc: "/images/work/product_list_with_cart.png",
+    gitURL: "https://github.com/jake5007/product-list-with-cart",
+    liveURL: "https://product-list-with-cart-peach-mu.vercel.app/",
+  },
+  {
+    id: 10,
     category: ["all", "backend"],
     title: "Icebreaker API",
     desc: "Simple public API to retrieve categorized or random ice-breaking questions",
@@ -91,7 +100,7 @@ export const workList = [
     liveURL: "https://icebreaker-api-us13.onrender.com/docs/",
   },
   {
-    id: 1,
+    id: 9,
     category: ["all", "fullstack"],
     title: "Online Shop",
     desc: "Online shop for buying products",
@@ -100,7 +109,7 @@ export const workList = [
     liveURL: "https://online-shop-pern.onrender.com/",
   },
   {
-    id: 2,
+    id: 8,
     category: ["all", "fullstack"],
     title: "Memory Board",
     desc: "Upload and share your valuable memories",
@@ -109,7 +118,7 @@ export const workList = [
     liveURL: "https://memory-board.onrender.com",
   },
   {
-    id: 3,
+    id: 7,
     category: ["all", "frontend"],
     title: "Meme Generator",
     desc: "Make memes using randomly fetched pictures",
@@ -118,7 +127,7 @@ export const workList = [
     liveURL: "https://meme-maker-git-main-jake5007.vercel.app/",
   },
   {
-    id: 4,
+    id: 6,
     category: ["all", "fullstack"],
     title: "Portfolio Website",
     desc: "My portfolio website",
@@ -136,7 +145,7 @@ export const workList = [
     liveURL: "https://space-tourism-website-jake5007.vercel.app/",
   },
   {
-    id: 6,
+    id: 4,
     category: ["all", "frontend"],
     title: "Rock Paper Scissors Lizard Spock",
     desc: "Play Rock Paper Scissors Lizard Spock with computer",
@@ -145,7 +154,7 @@ export const workList = [
     liveURL: "https://creative-dragon-ccbb55.netlify.app/",
   },
   {
-    id: 7,
+    id: 3,
     category: ["all", "frontend"],
     title: "IP Adress Tracker",
     desc: "You can get the IP address locations by searching IP address",
@@ -155,7 +164,7 @@ export const workList = [
   },
 
   {
-    id: 8,
+    id: 2,
     category: ["all", "frontend"],
     title: "Age Calculator",
     desc: "Write your dob and calculate your age",
@@ -167,7 +176,7 @@ export const workList = [
   },
 
   {
-    id: 9,
+    id: 1,
     category: ["all", "frontend"],
     title: "Advice Generator",
     desc: "You can get some advice randomly",
