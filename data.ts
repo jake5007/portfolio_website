@@ -82,7 +82,7 @@ export const workTabs = [
 
 export const workList = [
   {
-    id: 11,
+    id: 10,
     category: ["all", "frontend"],
     title: "Dessert List with Cart",
     desc: "Take a look at mouthwatering desserts and add them to your cart",
@@ -91,7 +91,7 @@ export const workList = [
     liveURL: "https://product-list-with-cart-peach-mu.vercel.app/",
   },
   {
-    id: 10,
+    id: 9,
     category: ["all", "backend"],
     title: "Icebreaker API",
     desc: "Simple public API to retrieve categorized or random ice-breaking questions",
@@ -100,7 +100,7 @@ export const workList = [
     liveURL: "https://icebreaker-api-us13.onrender.com/docs/",
   },
   {
-    id: 9,
+    id: 8,
     category: ["all", "fullstack"],
     title: "Online Shop",
     desc: "Online shop for buying products",
@@ -109,7 +109,7 @@ export const workList = [
     liveURL: "https://online-shop-pern.onrender.com/",
   },
   {
-    id: 8,
+    id: 7,
     category: ["all", "fullstack"],
     title: "Memory Board",
     desc: "Upload and share your valuable memories",
@@ -118,22 +118,13 @@ export const workList = [
     liveURL: "https://memory-board.onrender.com",
   },
   {
-    id: 7,
+    id: 6,
     category: ["all", "frontend"],
     title: "Meme Generator",
     desc: "Make memes using randomly fetched pictures",
     imgSrc: "/images/work/meme_maker.png",
     gitURL: "https://github.com/jake5007/meme_maker",
     liveURL: "https://meme-maker-git-main-jake5007.vercel.app/",
-  },
-  {
-    id: 6,
-    category: ["all", "fullstack"],
-    title: "Portfolio Website",
-    desc: "My portfolio website",
-    imgSrc: "/images/work/portfolio_website.png",
-    gitURL: "https://github.com/jake5007/portfolio_website",
-    liveURL: "",
   },
   {
     id: 5,
