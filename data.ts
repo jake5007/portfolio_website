@@ -67,23 +67,28 @@ export const workTabs = [
     title: "All",
   },
   {
-    id: "fullstack",
-    title: "Fullstack",
+    id: "dev",
+    title: "Dev",
   },
   {
-    id: "frontend",
-    title: "Frontend",
-  },
-  {
-    id: "backend",
-    title: "Backend",
+    id: "test",
+    title: "Test",
   },
 ];
 
 export const workList = [
   {
+    id: 11,
+    category: ["all", "test"],
+    title: "Sauce Demo Playwright E2E Test",
+    desc: "Playwright-based E2E testing project with scalable structure and real-world user flow validation",
+    imgSrc: "/images/work/saucedemo_playwright.png",
+    gitURL: "https://github.com/jake5007/saucedemo-playwright-portfolio",
+    liveURL: "https://jake5007.github.io/saucedemo-playwright-portfolio/",
+  },
+  {
     id: 10,
-    category: ["all", "frontend"],
+    category: ["all", "dev"],
     title: "Dessert List with Cart",
     desc: "Take a look at mouthwatering desserts and add them to your cart",
     imgSrc: "/images/work/product_list_with_cart.png",
@@ -92,7 +97,7 @@ export const workList = [
   },
   {
     id: 9,
-    category: ["all", "backend"],
+    category: ["all", "dev"],
     title: "Icebreaker API",
     desc: "Simple public API to retrieve categorized or random ice-breaking questions",
     imgSrc: "/images/work/icebreaker_api.png",
@@ -101,7 +106,7 @@ export const workList = [
   },
   {
     id: 8,
-    category: ["all", "fullstack"],
+    category: ["all", "dev"],
     title: "Online Shop",
     desc: "Online shop for buying products",
     imgSrc: "/images/work/online_shop.png",
@@ -110,7 +115,7 @@ export const workList = [
   },
   {
     id: 7,
-    category: ["all", "fullstack"],
+    category: ["all", "dev"],
     title: "Memory Board",
     desc: "Upload and share your valuable memories",
     imgSrc: "/images/work/memory_board.png",
@@ -119,7 +124,7 @@ export const workList = [
   },
   {
     id: 6,
-    category: ["all", "frontend"],
+    category: ["all", "dev"],
     title: "Meme Generator",
     desc: "Make memes using randomly fetched pictures",
     imgSrc: "/images/work/meme_maker.png",
@@ -128,7 +133,7 @@ export const workList = [
   },
   {
     id: 5,
-    category: ["all", "frontend"],
+    category: ["all", "dev"],
     title: "Space Tourism Website",
     desc: "Visit space tourism website",
     imgSrc: "/images/work/space_tourism.png",
@@ -137,7 +142,7 @@ export const workList = [
   },
   {
     id: 4,
-    category: ["all", "frontend"],
+    category: ["all", "dev"],
     title: "Rock Paper Scissors Lizard Spock",
     desc: "Play Rock Paper Scissors Lizard Spock with computer",
     imgSrc: "/images/work/rpsls.png",
@@ -146,7 +151,7 @@ export const workList = [
   },
   {
     id: 3,
-    category: ["all", "frontend"],
+    category: ["all", "dev"],
     title: "IP Adress Tracker",
     desc: "You can get the IP address locations by searching IP address",
     imgSrc: "/images/work/ip_address_tracker.png",
@@ -156,7 +161,7 @@ export const workList = [
 
   {
     id: 2,
-    category: ["all", "frontend"],
+    category: ["all", "dev"],
     title: "Age Calculator",
     desc: "Write your dob and calculate your age",
     imgSrc: "/images/work/age_calculator.png",
@@ -168,7 +173,7 @@ export const workList = [
 
   {
     id: 1,
-    category: ["all", "frontend"],
+    category: ["all", "dev"],
     title: "Advice Generator",
     desc: "You can get some advice randomly",
     imgSrc: "/images/work/advice_generator.png",
