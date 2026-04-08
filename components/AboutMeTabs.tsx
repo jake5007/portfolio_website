@@ -14,7 +14,7 @@ const AboutMeTabs = () => {
           <TabBtn
             key={tab.id}
             active={currTab === tab.id}
-            onTabChange={() => setCurrTab((prev) => tab.id)}
+            onTabChange={() => setCurrTab(tab.id)}
           >
             {tab.title}
           </TabBtn>
@@ -24,8 +24,20 @@ const AboutMeTabs = () => {
         <ul className="list-disc pl-4">
           {aboutTabs
             .find((tab) => currTab === tab.id)
-            ?.content?.map((item, idx) => (
-              <li key={idx}>{item}</li>
+            ?.content.map((item, idx) => (
+              <li key={idx}>
+                {currTab === "experience" ? (
+                  <>
+                    <span className="font-bold">{item.label}</span> at{" "}
+                    {item.value}
+                  </>
+                ) : (
+                  <>
+                    <span className="font-bold">{item.label}</span>:{" "}
+                    {item.value}
+                  </>
+                )}
+              </li>
             ))}
         </ul>
       </div>

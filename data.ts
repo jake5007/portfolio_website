@@ -17,46 +17,93 @@ export const navLinks = [
   },
 ];
 
-export const aboutTabs = [
+type AboutTab = {
+  id: string;
+  title: string;
+  content: AboutContentItem[];
+};
+
+type AboutContentItem = {
+  label: string;
+  value: string;
+};
+
+export const aboutTabs: AboutTab[] = [
   {
     id: "skills",
     title: "Skills",
     content: [
-      "HTML, CSS",
-      "JavaScript, TypeScript",
-      "React",
-      "Vue",
-      "Next.js",
-      "Node/Express",
-      "RDBMS (PostgreSQL, Oracle)",
-      "NoSQL (MongoDB)",
+      {
+        label: "Frontend",
+        value: "JavaScript (TypeScript), React, Tailwind CSS, Vue.js",
+      },
+      {
+        label: "Backend",
+        value: "Node.js (Express)",
+      },
+      {
+        label: "Database",
+        value: "PostgreSQL, Oracle, MongoDB",
+      },
+      {
+        label: "Testing",
+        value: "Playwright (E2E Test Automation)",
+      },
     ],
   },
   {
     id: "education",
     title: "Education",
     content: [
-      "Handong Global University, Republic of Korea",
-      "Backend Web Developer Training Course",
-      "MERN Stack Course",
+      {
+        label: "University",
+        value: "Handong Global University (Pohang, South Korea)",
+      },
+      {
+        label: "Training",
+        value:
+          "Java&Spring Backend Developer Training Course (Busan, South Korea)",
+      },
+      {
+        label: "Course",
+        value: "MERN Stack Course (Udemy)",
+      },
     ],
   },
   {
     id: "experience",
     title: "Experience",
     content: [
-      "Credit Analyst, at Goryo Savings Bank",
-      "Frontend Web Developer, at SCADAICT",
-      "Software Developer, at WITH Info",
+      {
+        label: "Software Developer",
+        value: "WITH Info",
+      },
+      {
+        label: "Frontend Developer",
+        value: "SAINTI",
+      },
+      {
+        label: "Credit Analyst",
+        value: "Goryo Savings Bank",
+      },
     ],
   },
   {
     id: "languages",
     title: "Languages",
     content: [
-      "Korean - Native",
-      "English - C1 (Advanced), IELTS GT: Overall 7.0",
-      "German - A1 (Beginner)",
+      {
+        label: "Korean",
+        value: "Native",
+      },
+      {
+        label: "English",
+        value: "C1 (Advanced), IELTS GT: Overall 7.0",
+      },
+      {
+        label: "German",
+        value: "A1 (Beginner)",
+      },
     ],
   },
 ];
