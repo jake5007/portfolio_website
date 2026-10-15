@@ -27,7 +27,7 @@ const Hero = () => {
                 1500,
                 "Hyunjin",
                 1000, // wait 1s before replacing "Mice" with "Hamsters"
-                "Web Developer",
+                "QA Engineer",
                 1000,
               ]}
               wrapper="span"
@@ -35,9 +35,10 @@ const Hero = () => {
               repeat={Infinity}
             />
           </h1>
-          <p className="text-base sm:text-lg lg:text-xl">
-            Welcome! Thank you for visiting my website. Hope you find something
-            interesting here {":)"}
+          <p className="text-base sm:text-lg lg:text-xl text-left">
+            With a background in software development, I focus on improving
+            software quality through systematic testing, problem-solving, and
+            automation.
           </p>
           <div className="mt-4">
             <Link href="#contact">
