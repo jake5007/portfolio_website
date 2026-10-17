@@ -36,6 +36,7 @@ export type InputContainerProps = {
   type?: string;
   placeholder: string;
   textarea?: boolean;
+  maxLength?: number;
 };
 
 export type ContactFormData = {
