@@ -1,21 +1,33 @@
 "use client";
 
 import { useThemeStore } from "@/store/useThemeStore";
-import { useHasHydrated } from "@/hook/useHasHydrated";
 import { useEffect, useState } from "react";
 import { ChevronsUpIcon } from "lucide-react";
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const theme = useThemeStore((state) => state.theme);
-  const hasHydrated = useHasHydrated();
-
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    if (hasHydrated) {
-      document.documentElement.setAttribute("data-theme", theme);
-    }
-  }, [theme, hasHydrated]);
+    let active = true;
+    const applyTheme = () => {
+      if (active) {
+        document.documentElement.setAttribute(
+          "data-theme",
+          useThemeStore.getState().theme
+        );
+      }
+    };
+
+    const unsubscribe = useThemeStore.subscribe(applyTheme);
+    // The first client render uses the same default as SSR. The head script
+    // has already applied any saved theme without changing React-owned content.
+    Promise.resolve(useThemeStore.persist?.rehydrate()).then(applyTheme);
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,14 +46,6 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  if (!hasHydrated) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="loading loading-dots loading-xl" />
-      </div>
-    );
-  }
 
   return (
     <>
