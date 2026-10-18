@@ -31,18 +31,33 @@ const Navbar = () => {
 
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 768px)");
-    const closeOnResize = () => {
+    const moveHiddenFocus = (element: Element | null) => {
       if (desktop.matches) {
-        if (document.activeElement?.closest("#mobile-navigation")) {
+        if (element === toggle.current || element?.closest("#mobile-navigation")) {
           nav.current?.querySelector<HTMLAnchorElement>(".menu a")?.focus();
         }
-        setNavOpen(false);
-      } else if (document.activeElement?.closest(".menu")) {
+      } else if (element?.closest(".menu")) {
         toggle.current?.focus();
       }
     };
+    // CSS can blur a newly hidden link before matchMedia's change notification.
+    // In that order activeElement is already BODY; focusout retains the source.
+    const focusOut = (event: FocusEvent) => {
+      if (!event.relatedTarget && event.target instanceof Element) {
+        moveHiddenFocus(event.target);
+      }
+    };
+    const closeOnResize = () => {
+      moveHiddenFocus(document.activeElement);
+      if (desktop.matches) setNavOpen(false);
+    };
+    const navigation = nav.current;
+    navigation?.addEventListener("focusout", focusOut);
     desktop.addEventListener("change", closeOnResize);
-    return () => desktop.removeEventListener("change", closeOnResize);
+    return () => {
+      navigation?.removeEventListener("focusout", focusOut);
+      desktop.removeEventListener("change", closeOnResize);
+    };
   }, []);
 
   return (

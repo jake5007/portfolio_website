@@ -22,6 +22,9 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:3105",
     browserName: "chromium",
+    deviceScaleFactor: 1,
+    locale: "en-US",
+    timezoneId: "UTC",
     launchOptions: {
       executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
     },

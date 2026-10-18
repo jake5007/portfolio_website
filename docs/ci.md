@@ -6,14 +6,16 @@
 `refactor/portfolio-modernization` push에서 실행한다. 배포나 PR 생성은 하지 않는다.
 PR에서는 GitHub의 기본 merge ref를 검사하며, push에서는 해당 커밋을 검사한다.
 
-Ubuntu 24.04의 단일 job에서 다음 순서로 실행한다.
+Ubuntu 24.04 GitHub-hosted runner의 단일 job에서 digest로 고정한 공식 Playwright
+Noble container를 사용한다. 이미지/기준 생성 절차는
+[Contact 시각 회귀 기준 관리](visual-baselines.md)를 따른다.
 
-1. 소스 checkout, Node.js 24 LTS 설정, npm 다운로드 캐시 복원.
+1. 소스 checkout, 고정 이미지에 포함된 Node.js 24 LTS 확인.
 2. `npm ci`: 기존 lockfile로 설치. manifest/lockfile 불일치는 실패한다.
 3. `npm run lint`.
 4. `npm run build`: 프로덕션 빌드를 한 번만 생성한다.
 5. `npm run typecheck -- --incremental false`.
-6. `npx --no-install playwright install --with-deps chromium`.
+6. 이미지에 포함된 Chromium을 launch하고 OS·architecture·실제 브라우저 버전을 기록한다.
 7. `npm test`: 전체 테스트 실행 및 보고서 생성.
 
 Next.js 빌드가 `.next/types`와 `next-env.d.ts`를 생성하므로 독립 TypeScript 검사는
@@ -22,9 +24,11 @@ Next.js 빌드가 `.next/types`와 `next-env.d.ts`를 생성하므로 독립 Typ
 Node 24는 현재 `engines.node: >=24 <25`와 일치하며 공식 지원 종료는
 2028-04-30이다. 새 major 채택은 별도 호환성 검토 대상이다.
 
-npm 캐시는 lockfile을 기준으로 관리하고 `node_modules`, `.next`, 브라우저와
-테스트 결과는 캐시하지 않는다. 매 run은 Playwright 버전에 맞는 Chromium과
-시스템 라이브러리를 설치한다. 동일 PR 또는 동일 브랜치의 오래된 run은 취소한다.
+렌더링 환경과 로컬/CI Node 버전 일치를 우선해 이미지의 Node를 그대로 사용하며
+setup-node의 런타임 교체·npm 캐시는 제거했다. `npm ci`는 매번 수행하며
+`node_modules`, `.next`, 브라우저와 테스트 결과도 캐시하지 않는다.
+Chromium·시스템 라이브러리·폰트는 고정 이미지의
+것을 사용하고 재설치하지 않는다. 동일 PR 또는 동일 브랜치의 오래된 run은 취소한다.
 해당 기능 브랜치에 열린 PR이 있으면 push와 PR 두 이벤트가 각각 실행될 수 있다.
 
 ## 테스트 격리와 종료
@@ -44,7 +48,7 @@ npm 캐시는 lockfile을 기준으로 관리하고 `node_modules`, `.next`, 브
   임시 `127.0.0.1` SMTP sink를 사용한다. 테스트용 소켓·타이머는 fixture가 정리한다.
 - CI job과 테스트 webServer의 `AUTH_USER`, `AUTH_PASS`를 빈 값으로 명시한다.
   운영 SMTP 설정은 필요하지 않으며, 실제 메일을 보내지 않는다.
-- 페이지 검증은 외부 API에 의존하지 않는다. 다만 의존성·브라우저 설치와 빌드의
+- 페이지 검증은 외부 API에 의존하지 않는다. 다만 이미지·의존성 다운로드와 빌드의
   `next/font/google`은 네트워크가 필요하다. 런타임에서는 빌드에 포함된 폰트를 쓴다.
 
 ## 보안 경계
@@ -63,11 +67,10 @@ fork PR 코드와 npm lifecycle script도 실행되므로, 승인된 GitHub 호�
 | Action | 검토한 태그 | SHA |
 | --- | --- | --- |
 | actions/checkout | v6 | `d23441a48e516b6c34aea4fa41551a30e30af803` |
-| actions/setup-node | v6 | `249970729cb0ef3589644e2896645e5dc5ba9c38` |
 | actions/upload-artifact | v7 | `cf430e030ddbb5b0abf93d22962f4752f3646cd9` |
 
 고정 SHA도 보안 공지와 릴리스를 확인해 주기적으로 갱신해야 한다.
-캐시는 다운로드한 npm 패키지 재사용 용도이며, 검증 단계를 생략하지 않는다.
+이미지와 Actions 갱신 시 검증 단계를 생략하지 않는다.
 
 ## 실패 해석과 artifact
 
@@ -97,14 +100,15 @@ Artifacts의 `playwright-results-<run attempt>` ZIP을 내려받으면 다음을
 | npm ci | manifest/lockfile 일치, Node 24, npm registry 접근, 설치 로그 |
 | ESLint / TypeScript | 표시된 파일·행의 실제 오류. 규칙이나 검사 비활성화 금지 |
 | Build | 소스 오류와 Google Fonts 다운로드 실패를 구분. 네트워크 실패를 폰트 mock으로 숨기지 않음 |
-| Chromium 설치 | Playwright CDN 접근, runner의 apt/system dependency 설치 로그 |
+| Container / Chromium 검증 | Microsoft registry/이미지 CDN 접근, lockfile과 이미지의 Playwright 버전 일치, bundled browser launch 로그 |
 | Playwright | 첫 실패의 HTML/trace, 콘솔·네트워크, 로컬 SMTP 타임아웃과 정리 결과 |
 | Screenshot | browser/OS/font 버전과 실제 PNG diff. 기준 이미지를 자동 갱신하거나 허용치를 넓히지 않음 |
 
 ## 로컬 재현과 검증 범위
 
-CI 방식으로 재현하려면 Node 24와 쓰기 가능한 npm/browser 캐시, 인터넷 연결이
-필요하다. 저장소 루트에서 실행한다.
+정식 시각 회귀 재현은 [동일 digest 이미지 실행 절차](visual-baselines.md#실행과-승인-절차)를
+사용한다. 아래는 Node 24와 관리 Chromium을 별도로 설치하는 일반 로컬 검사이며,
+OS/시스템 폰트가 다르면 CI와 동일한 시각 검사 환경이 아니다.
 
 ```sh
 npm ci
@@ -144,18 +148,22 @@ Chromium override로 검증한 결과이다. 실제 이메일은 보내지 않�
 이번 단계에서 의존성 업그레이드는 수행하지 않았으며, 이 경고를 security audit
 통과나 취약점 부재로 해석해서는 안 된다.
 
-GitHub Actions 실행은 commit/push 이후 확인해야 한다. 실제 GitHub runner에서의
-설치·검증·artifact 업로드는 실행하지 않았으므로 GitHub CI 통과를 선언하지 않는다.
+이 표는 첫 push 이전의 로컬 검증 이력이다. 이후 실제 GitHub 실행 결과는 아래와
+같으며, 이력의 로컬 통과를 GitHub CI 통과로 해석하지 않는다.
 
 ### 브라우저와 시각 회귀의 남은 검증
 
-현재 PNG 기준은 Debian Linux의 Chromium 154에서 작성됐다. lockfile의
-Playwright 1.64.1은 Chromium 156.0.8078.4를 지정한다. GitHub의 Ubuntu 24.04와
-이 브라우저 조합에서는 글꼴 렌더링 차이도 있을 수 있다. 기존 엄격한 PNG 비교는
-유지하며 첫 GitHub run에서 호환성을 확인해야 한다. 차이가 생기면 artifact를
-검토해 환경 차이와 UI 회귀를 구분한 뒤 기준 변경 여부를 승인받는다.
-이 클라우드에서 관리 브라우저 설치는 CDN의 403 `Domain forbidden`으로 차단됐다.
-TLS 검사나 다운로드 검증을 끄지 않았으며 대체 패키지를 설치하지 않았다.
+첫 [GitHub 실행](https://github.com/jake5007/portfolio_website/actions/runs/39094160189)은
+3분 53초 후 실패했다. 106개 통과·2개 Contact PNG 비교 실패였으며 artifact
+`playwright-results-1`(19.5MB) 생성과 공개 오류 주석을 확인했다. Actions API는
+Forbidden이고 상세 로그는 로그인이 필요해 사용자 정의 Summary 전체는 검증하지
+못했다. 사용자가 별도로 검토한 이미지의 크기·구조는 일치하고 글자·아이콘 주변의
+차이가 주로 관찰됐다. 확정 사실/가설과 새 환경 표준안은
+[시각 회귀 문서](visual-baselines.md)에 구분해 기록했다.
+
+현재 변경은 표준 환경을 준비하는 단계다. 기준 PNG는 아직 보존하며 고정 이미지의
+실행과 기준 교체는 별도로 검증·승인해야 한다. 관리 브라우저 CDN과 Docker 이미지
+다운로드가 이 클라우드에서 403으로 차단됐으며 검증을 끄거나 우회하지 않았다.
 
 ## upstream 진단
 

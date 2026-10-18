@@ -17,6 +17,11 @@ jobs:
   verify:
     name: Quality, build and Playwright
     runs-on: ubuntu-24.04
+    # Match this image to the lockfile's Playwright version. The digest pins
+    # browser binaries, system libraries and system fonts as one reviewed unit.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:7852dc5a7d72f5fe458a597d690f6c42fbc8e9e26ddfa95f8e6ef552558d9bbf
+      options: --init --shm-size=1g
     timeout-minutes: 20
     env:
       CI: 'true'
@@ -31,12 +36,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Node.js 24 LTS
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: '24'
-          cache: npm
-          cache-dependency-path: package-lock.json
+      - name: Verify image Node.js 24 LTS
+        run: |
+          node -e 'if (process.versions.node.split(".")[0] !== "24") throw new Error("The pinned image must provide Node.js 24"); console.log(`::notice title=Image runtime::Node ${process.version}; ${process.platform}/${process.arch}`)'
 
       - name: Install locked dependencies
         id: dependencies
@@ -55,9 +57,26 @@ jobs:
         id: types
         run: npm run typecheck -- --incremental false
 
-      - name: Install Chromium and system dependencies
+      - name: Verify bundled Chromium and record environment
         id: browser
-        run: npx --no-install playwright install --with-deps chromium
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from '@playwright/test';
+          import { readFileSync } from 'node:fs';
+          const browser = await chromium.launch();
+          try {
+            console.log(`::notice title=Playwright runtime::Node ${process.version}; Chromium ${browser.version()}; ${process.arch}; ${chromium.executablePath()}`);
+            console.log(JSON.stringify({
+              os: readFileSync('/etc/os-release', 'utf8'),
+              architecture: process.arch,
+              nodeVersion: process.version,
+              browserVersion: browser.version(),
+              executable: chromium.executablePath(),
+            }, null, 2));
+          } finally {
+            await browser.close();
+          }
+          NODE
 
       - name: Playwright
         id: tests

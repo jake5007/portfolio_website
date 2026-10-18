@@ -1,6 +1,11 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page, type TestInfo } from "@playwright/test";
+import { version as playwrightVersion } from "@playwright/test/package.json";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { basename, join } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { themes } from "../data";
+import { observeNavigationFocus, attachNavigationFocus, navigationFocusStep } from "./navigation-focus-diagnostics";
 
 test.use({ reducedMotion: "reduce" });
 const browserErrors = new WeakMap<Page, string[]>();
@@ -17,7 +22,22 @@ test.beforeEach(async ({ page, context }) => {
     status: 200, contentType: "text/html", body: "<title>Local navigation fixture</title>",
   }));
 });
-test.afterEach(async ({ page }) => {
+test.afterEach(async ({ page }, testInfo) => {
+  await attachNavigationFocus(page, testInfo);
+  if (testInfo.status !== testInfo.expectedStatus && !page.isClosed()) {
+    await testInfo.attach("navigation-focus-state", {
+      contentType: "application/json",
+      body: JSON.stringify(await page.evaluate(() => ({
+        documentFocused: document.hasFocus(),
+        activeTag: document.activeElement?.tagName,
+        activeName: document.activeElement?.getAttribute("aria-label"),
+        activeHref: document.activeElement?.getAttribute("href"),
+        activeId: document.activeElement?.id,
+        desktop: matchMedia("(min-width: 768px)").matches,
+        viewport: { width: innerWidth, height: innerHeight },
+      })), null, 2),
+    });
+  }
   expect(browserErrors.get(page)).toEqual([]);
 });
 
@@ -67,6 +87,7 @@ test("skip link, landmarks, headings and native link activation", async ({ page 
 test("mobile disclosure supports Space, Escape, destination focus and desktop resize", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 900 });
   await load(page);
+  await observeNavigationFocus(page);
   const toggle = page.getByRole("button", { name: "Open navigation" });
   await toggle.focus();
   await page.keyboard.press("Space");
@@ -83,12 +104,13 @@ test("mobile disclosure supports Space, Escape, destination focus and desktop re
   await expect(page).toHaveURL(/#work$/);
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
   expect(await page.locator("#work").evaluate((n) => n.getBoundingClientRect().top)).toBeGreaterThanOrEqual(55);
-  await toggle.click();
-  await page.setViewportSize({ width: 1024, height: 900 });
-  await expect(page.locator("#mobile-navigation")).toHaveCount(0);
-  await expect(page.locator("nav .menu a").first()).toBeFocused();
-  await page.setViewportSize({ width: 320, height: 900 });
-  await expect(toggle).toBeFocused();
+  await navigationFocusStep(page, "reopen mobile menu", () => toggle.click());
+  await navigationFocusStep(page, "assert reopened mobile link focused", () => expect(page.locator("#mobile-navigation a").first()).toBeFocused());
+  await navigationFocusStep(page, "resize to desktop", () => page.setViewportSize({ width: 1024, height: 900 }));
+  await navigationFocusStep(page, "assert mobile menu removed", () => expect(page.locator("#mobile-navigation")).toHaveCount(0));
+  await navigationFocusStep(page, "assert desktop link focused", () => expect(page.locator("nav .menu a").first()).toBeFocused());
+  await navigationFocusStep(page, "resize to mobile", () => page.setViewportSize({ width: 320, height: 900 }));
+  await navigationFocusStep(page, "assert mobile toggle focused", () => expect(toggle).toBeFocused());
 });
 
 test("mobile navigation has a natural Tab exit without a focus trap", async ({ page }) => {
@@ -105,6 +127,39 @@ test("mobile navigation has a natural Tab exit without a focus trap", async ({ p
   await page.keyboard.press("Escape");
   await expect(page.getByRole("button", { name: "Open navigation" })).toBeFocused();
   await expect(page.locator("#mobile-navigation")).toHaveCount(0);
+});
+
+test("navigation preserves focus across repeated breakpoint changes without stealing content focus", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await load(page);
+  await observeNavigationFocus(page);
+  const toggle = page.getByRole("button", { name: "Open navigation" });
+  const desktopLink = page.locator("nav .menu a").first();
+  // Exercise both ordinary widths and the exact CSS breakpoint in one document.
+  // CSS blur and matchMedia notifications can arrive in either order.
+  for (let i = 0; i < 40; i++) {
+    await test.step(`breakpoint round trip ${i + 1}`, async () => {
+      await toggle.click();
+      await expect(page.locator("#mobile-navigation a").first()).toBeFocused();
+      await page.setViewportSize({ width: i % 2 ? 768 : 1024, height: 900 });
+      await expect(page.locator("#mobile-navigation")).toHaveCount(0);
+      await expect(desktopLink).toBeFocused();
+      await page.setViewportSize({ width: i % 2 ? 767 : 320, height: 900 });
+      await expect(toggle).toBeFocused();
+    });
+  }
+  // The closed-menu toggle also disappears when crossing to desktop.
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(desktopLink).toBeFocused();
+  await page.setViewportSize({ width: 320, height: 900 });
+  await expect(toggle).toBeFocused();
+  // Resizing must leave focus alone when no navigation control is disappearing.
+  const email = page.getByRole("textbox", { name: "Your Email" });
+  await email.focus();
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(email).toBeFocused();
+  await page.setViewportSize({ width: 320, height: 900 });
+  await expect(email).toBeFocused();
 });
 
 test("all themes support keyboard selection, Escape, outside dismissal and persistence", async ({ page }) => {
@@ -285,6 +340,51 @@ for (const width of [320, 360, 390, 768, 1440]) {
   });
 }
 
+// Record actual glyph fonts and webfont bytes, not just the CSS font-family:
+// fallback fonts can differ even when the same family is requested.
+async function attachVisualEnvironment(page: Page, testInfo: TestInfo) {
+  const rendered = await page.evaluate(() => ({
+    deviceScaleFactor: devicePixelRatio,
+    locale: navigator.language,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    theme: document.documentElement.dataset.theme,
+    fontsStatus: document.fonts.status,
+    fonts: Array.from(document.fonts).map(font => ({
+      family: font.family, weight: font.weight, style: font.style, status: font.status,
+    })),
+    fontAssets: performance.getEntriesByType("resource").map(entry => new URL(entry.name).pathname)
+      .filter(path => /^\/_next\/static\/media\/[^/]+\.woff2$/.test(path)),
+    fontFamilies: Object.fromEntries(["#contact label", "#contact input", "#contact textarea", "#contact button"]
+      .map(selector => [selector, getComputedStyle(document.querySelector(selector)!).fontFamily])),
+  }));
+  const session = await page.context().newCDPSession(page);
+  const platformFonts: Record<string, unknown> = {};
+  try {
+    await session.send("DOM.enable");
+    await session.send("CSS.enable");
+    const { root } = await session.send("DOM.getDocument");
+    for (const selector of ["#contact label", "#contact button"]) {
+      const { nodeId } = await session.send("DOM.querySelector", { nodeId: root.nodeId, selector });
+      platformFonts[selector] = (await session.send("CSS.getPlatformFontsForNode", { nodeId })).fonts;
+    }
+  } finally {
+    await session.detach();
+  }
+  await testInfo.attach("visual-environment", {
+    contentType: "application/json",
+    body: JSON.stringify({
+      os: process.platform === "linux" ? readFileSync("/etc/os-release", "utf8") : process.platform,
+      architecture: process.arch, nodeVersion: process.version, playwrightVersion,
+      browserVersion: page.context().browser()?.version(), viewport: page.viewportSize(),
+      ...rendered, platformFonts,
+      fontAssets: Array.from(new Set(rendered.fontAssets)).map(path => ({
+        path,
+        sha256: createHash("sha256").update(readFileSync(join(".next", "static", "media", basename(path)))).digest("hex"),
+      })),
+    }, null, 2),
+  });
+}
+
 for (const width of [1440, 320]) {
   for (const theme of themes) {
     test(`${theme.name} ${width}px: WCAG-tagged axe checks, including open theme controls`, async ({ page }, testInfo) => {
@@ -304,10 +404,11 @@ for (const width of [1440, 320]) {
     });
   }
 
-  test(`${width}px Contact visual regression`, async ({ page }) => {
+  test(`${width}px Contact visual regression`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await load(page);
     await page.locator("#contact").scrollIntoViewIfNeeded();
+    await attachVisualEnvironment(page, testInfo);
     await expect(page.locator("#contact")).toHaveScreenshot(`contact-night-${width}.png`, {
       animations: "disabled", maxDiffPixels: 0,
     });
