@@ -29,6 +29,7 @@ const InputContainer = ({
           name={name}
           id={name}
           type={type}
+          autoComplete={type === "email" ? "email" : undefined}
           required
           maxLength={maxLength}
           placeholder={placeholder}

@@ -1,10 +1,12 @@
 export type NavLinkProps = {
   href: string;
   title: string;
+  onClick?: () => void;
 };
 
 export type MenuOverlayProps = {
   links: { title: string; path: string }[];
+  onNavigate: (href: string) => void;
 };
 
 export type TabBtnProps = {

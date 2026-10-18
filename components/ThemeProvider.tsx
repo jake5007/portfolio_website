@@ -44,7 +44,11 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   }, [setShowScrollTop]);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+    });
+    document.getElementById("main-content")?.focus({ preventScroll: true });
   };
 
   return (
@@ -52,9 +56,11 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
       {showScrollTop && (
         <button
+          type="button"
+          aria-label="Back to top"
           onClick={scrollToTop}
           className="btn btn-circle btn-primary fixed bottom-8 right-8 shadow-xl
-          opacity-60 hover:opacity-100 transition-opacity duration-200"
+          hover:opacity-90 transition-opacity duration-200"
         >
           <ChevronsUpIcon className="size-8" />
         </button>

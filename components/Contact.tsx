@@ -75,17 +75,18 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="mt-10">
+    <section id="contact" tabIndex={-1} aria-label="Contact" className="mt-10">
       <div className="flex justify-center gap-8 w-full my-5">
-        <Link href="https://github.com/jake5007" target="_blank">
+        <Link href="https://github.com/jake5007" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)">
           <GithubIcon className="size-10 text-base-content hover:opacity-80 transition-opacity duration-200" />
         </Link>
-        <Link href="https://www.linkedin.com/in/hyunjinchae/" target="_blank">
+        <Link href="https://www.linkedin.com/in/hyunjinchae/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile (opens in a new tab)">
           <LinkedInIcon className="size-10 text-base-content hover:opacity-80 transition-opacity duration-200" />
         </Link>
       </div>
 
       <form
+        aria-label="Contact"
         className="flex flex-col items-center w-full"
         onSubmit={handleSubmit}
       >

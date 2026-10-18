@@ -6,14 +6,10 @@ const TabBtn = ({
   customTextClasses,
   children,
 }: TabBtnProps) => {
-  // const textStyles = active
-  //   ? "underline underline-offset-4 decoration-2"
-  //   : "text-base-content/70";
-
   return (
-    <button onClick={onTabChange}>
-      <p
-        className={`relative inline-block font-semibold sm:hover:opacity-80 transition-opacity duration-200 ${customTextClasses} ${
+    <button type="button" aria-pressed={active} onClick={onTabChange}>
+      <span
+        className={`relative inline-block font-semibold sm:hover:underline ${customTextClasses ?? ""} ${
           active ? "" : "text-base-content/80"
         }`}
       >
@@ -23,7 +19,7 @@ const TabBtn = ({
             active ? "scale-x-100" : "scale-x-0"
           }`}
         />
-      </p>
+      </span>
     </button>
   );
 };

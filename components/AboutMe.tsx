@@ -3,19 +3,19 @@ import AboutMeTabs from "./AboutMeTabs";
 
 const AboutMe = () => {
   return (
-    <section id="about" className="sm:mt-8">
+    <section id="about" tabIndex={-1} className="sm:mt-8">
       <div className="md:grid md:grid-cols-2 gap-8 items-center py-8 px-4 xl:gap-16">
         <Image
           src="/images/website-image.svg"
-          alt="about image"
+          alt="Illustration of a website on a computer"
           width={500}
           height={500}
         />
 
         <div className="flex flex-col h-full text-left mt-6 md:mt-0">
-          <h1 className="text-primary text-2xl md:text-3xl font-bold text-center sm:text-left">
+          <h2 className="text-primary text-2xl md:text-3xl font-bold text-center sm:text-left">
             About Me
-          </h1>
+          </h2>
           <p className="mt-3 text-left">
             I'm a QA Engineer with a background in software development and a
             passion for improving software quality.
