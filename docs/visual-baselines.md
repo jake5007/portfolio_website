@@ -195,8 +195,8 @@ tests/accessibility.spec.ts-snapshots/contact-night-320-linux.png
   검토·보존용 동일 템플릿: [contact-baseline-generation.workflow.yml](contact-baseline-generation.workflow.yml).
 - push trigger는 `refactor/portfolio-modernization` 및 실행 workflow 경로 변경으로 한정한다.
 - job에서도 저장소·push 이벤트·브랜치를 재확인한다. push 이전 SHA가 정확히
-  `cf99a83ae8f76ae1541fde1e3195f097556461a5`이고 head commit 메시지가
-  `ci: add controlled Contact baseline generation`인 첫 실행만 허용한다.
+  `0ce752f17df49afef95ce839c4579be9e9bd6f1d`이고 head commit 메시지가
+  `ci: fix Contact baseline Git ownership check`인 첫 실행만 허용한다.
 - forced push와 `run_attempt != 1`을 거부한다. 이후 일반 push는 경로 필터 또는
   이전 SHA 조건에 걸려 후보를 재생성하지 않는다. 단순 rerun도 실행하지 않는다.
   실패 시 새로운 실행 승인을 받고 guard를 명시적으로 재검토해야 한다.
@@ -301,3 +301,32 @@ font audit는 두 viewport에서 Inter custom glyph, DPR/locale/timezone/theme,
 - 별도 config의 경로 분리는 `/tmp`에 복사한 기존 PNG 두 장을 이용한 로컬 엄격
   비교로 확인한다. 그 과정에서 컨테이너 후보를 생성하거나 원본을 덮어쓰지 않는다.
 - 실제 원격 결과와 artifact URL은 이번 실행이 끝난 뒤 사용자 보고에서 확인한다.
+
+
+### 확인된 Git 소유권 오류와 최소 교정
+
+최초 후보 run `39251487338`은 승인된 앱 SHA를 정상 checkout했지만 다음 명령에서
+실패했다. Node assertion은 실행되지 않았다는 사용자 상세 로그 확인 결과다.
+
+```text
+fatal: detected dubious ownership in repository at '/__w/portfolio_website/portfolio_website'
+```
+
+컨테이너에서 첫 `git rev-parse HEAD` 전에 다음을 실행한다.
+
+```sh
+test -n "$GITHUB_WORKSPACE"
+git config --global --add safe.directory "$GITHUB_WORKSPACE"
+```
+
+`safe.directory '*'`는 쓰지 않는다. 현재 checkout 경로 하나만 신뢰하며 인증 설정은
+바꾸지 않는다. checkout action의 임시 Git 설정과 달리 이 job의 HOME에 유지되는
+전역 설정이므로 같은 컨테이너의 이후 `git diff`, `git ls-files`, 최종 원본 보존
+검사에도 적용된다. 이후 step은 HOME/GIT_CONFIG_GLOBAL을 변경하지 않는다.
+원래 source SHA·Node v24.21.0·x64 assertion 및 pinned image digest는 그대로다.
+
+교정 커밋 push만 실행되도록 before SHA를 `0ce752f17df49afef95ce839c4579be9e9bd6f1d`,
+커밋 메시지를 `ci: fix Contact baseline Git ownership check`로 갱신했다. 저장소·이벤트·
+브랜치·최초 run attempt·forced-push 거부 조건을 유지하며 앱 source SHA는 계속
+`cf99a83ae8f76ae1541fde1e3195f097556461a5`이다. 실패 이후 자동 재실행은 하지 않는다.
+원래 PNG와 앱·테스트·기존 CI에는 변경이 없다.

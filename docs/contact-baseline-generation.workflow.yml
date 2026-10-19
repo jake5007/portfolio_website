@@ -1,5 +1,5 @@
 # Reviewed template; executable copy: .github/workflows/contact-baselines.yml.
-# The initial push from the approved source is the only eligible event.
+# Only the approved ownership-correction push is eligible; application source stays pinned.
 # Candidates are stored outside the tracked baseline directory.
 name: Review Contact baseline candidates
 
@@ -21,8 +21,8 @@ jobs:
       github.repository == 'jake5007/portfolio_website' &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/refactor/portfolio-modernization' &&
-      github.event.before == 'cf99a83ae8f76ae1541fde1e3195f097556461a5' &&
-      github.event.head_commit.message == 'ci: add controlled Contact baseline generation' &&
+      github.event.before == '0ce752f17df49afef95ce839c4579be9e9bd6f1d' &&
+      github.event.head_commit.message == 'ci: fix Contact baseline Git ownership check' &&
       github.event.forced == false &&
       github.run_attempt == '1'
     runs-on: ubuntu-24.04
@@ -46,8 +46,11 @@ jobs:
 
       - name: Verify source and Node
         run: |
+          test -n "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           test "$(git rev-parse HEAD)" = "$BASELINE_SOURCE_SHA"
           node -e 'const a = require("node:assert/strict"); a.equal(process.version, "v24.21.0"); a.equal(process.arch, "x64"); console.log(process.version, process.platform, process.arch)'
+          printf '::notice title=Verified source::%s; Node version and architecture assertions passed\n' "$BASELINE_SOURCE_SHA"
 
       - name: Install locked dependencies
         run: npm ci
