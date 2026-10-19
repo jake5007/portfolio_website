@@ -1,0 +1,258 @@
+# Reviewed template; executable copy: .github/workflows/contact-baselines.yml.
+# The initial push from the approved source is the only eligible event.
+# Candidates are stored outside the tracked baseline directory.
+name: Review Contact baseline candidates
+
+on:
+  push:
+    branches: [refactor/portfolio-modernization]
+    paths: [.github/workflows/contact-baselines.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contact-baseline-candidates-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  candidates:
+    if: >-
+      github.repository == 'jake5007/portfolio_website' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/refactor/portfolio-modernization' &&
+      github.event.before == 'cf99a83ae8f76ae1541fde1e3195f097556461a5' &&
+      github.event.head_commit.message == 'ci: add controlled Contact baseline generation' &&
+      github.event.forced == false &&
+      github.run_attempt == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:7852dc5a7d72f5fe458a597d690f6c42fbc8e9e26ddfa95f8e6ef552558d9bbf
+      options: --init --shm-size=1g
+    env:
+      CI: 'true'
+      TZ: UTC
+      NEXT_TELEMETRY_DISABLED: '1'
+      AUTH_USER: ''
+      AUTH_PASS: ''
+      BASELINE_SOURCE_SHA: cf99a83ae8f76ae1541fde1e3195f097556461a5
+    steps:
+      - name: Check out approved application revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: cf99a83ae8f76ae1541fde1e3195f097556461a5
+          persist-credentials: false
+
+      - name: Verify source and Node
+        run: |
+          test "$(git rev-parse HEAD)" = "$BASELINE_SOURCE_SHA"
+          node -e 'const a = require("node:assert/strict"); a.equal(process.version, "v24.21.0"); a.equal(process.arch, "x64"); console.log(process.version, process.platform, process.arch)'
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Verify bundled browser
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { chromium } from '@playwright/test';
+          import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+          const browser = await chromium.launch();
+          try {
+            assert.equal(browser.version(), '156.0.8078.4');
+            console.log(readFileSync('/etc/os-release', 'utf8'));
+            const runtime = { node: process.version, chromium: browser.version(), executable: chromium.executablePath(), architecture: process.arch, os: readFileSync('/etc/os-release', 'utf8'), configuredImage: 'mcr.microsoft.com/playwright:v1.64.1-noble@sha256:7852dc5a7d72f5fe458a597d690f6c42fbc8e9e26ddfa95f8e6ef552558d9bbf' };
+            mkdirSync('baseline-review', { recursive: true });
+            writeFileSync('baseline-review/runtime.json', JSON.stringify(runtime, null, 2));
+            console.log('::notice title=Baseline runtime::' + JSON.stringify(runtime).replaceAll('\n', ' '));
+          } finally { await browser.close(); }
+          NODE
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Production build
+        run: npm run build
+
+      - name: TypeScript
+        run: npm run typecheck -- --incremental false
+
+      - name: Preserve originals and configure separate candidate snapshots
+        run: |
+          mkdir -p baseline-review/before baseline-review/candidates baseline-review/diff
+          cp tests/accessibility.spec.ts-snapshots/contact-night-1440-linux.png baseline-review/before/
+          cp tests/accessibility.spec.ts-snapshots/contact-night-320-linux.png baseline-review/before/
+          cat > baseline-review/candidate.config.ts <<'CONFIG'
+          import base from '../playwright.config';
+          import { resolve } from 'node:path';
+          const root = process.cwd();
+          export default {
+            ...base,
+            testDir: resolve(root, 'tests'),
+            snapshotPathTemplate: resolve(root, 'baseline-review/candidates/{arg}-{platform}{ext}'),
+            reporter: [
+              ['line'], ['github'],
+              ['html', { open: 'never', outputFolder: resolve(root, 'playwright-report') }],
+              ['json', { outputFile: resolve(root, 'test-results/results.json') }],
+            ],
+            webServer: { ...base.webServer, cwd: root },
+          };
+          CONFIG
+
+      - name: Generate only Contact candidates
+        id: generate
+        run: |
+          npx --no-install playwright test --config baseline-review/candidate.config.ts tests/accessibility.spec.ts --grep '(1440|320)px Contact visual regression$' --update-snapshots=all --output=test-results/generation
+          cp test-results/results.json baseline-review/generation-results.json
+          cp -R playwright-report baseline-review/generation-report
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { execFileSync } from 'node:child_process';
+          import { createHash } from 'node:crypto';
+          import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+          import { chromium } from '@playwright/test';
+          const files = ['contact-night-1440-linux.png', 'contact-night-320-linux.png'];
+          const changed = execFileSync('git', ['diff', '--name-only'], { encoding: 'utf8' }).trim().split('\n').filter(Boolean).sort();
+          assert.deepEqual(changed, [], 'Tracked source and original baselines must remain unchanged');
+          assert.deepEqual(readdirSync('baseline-review/candidates').sort(), [...files].sort());
+          assert.equal(execFileSync('git', ['ls-files', '--others', '--exclude-standard', '--', 'tests/accessibility.spec.ts-snapshots'], { encoding: 'utf8' }).trim(), '');
+          const inspect = path => {
+            const bytes = readFileSync(path);
+            return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20), sha256: createHash('sha256').update(bytes).digest('hex') };
+          };
+          const images = files.map((file, index) => {
+            const before = inspect(`baseline-review/before/${file}`);
+            const after = inspect(`baseline-review/candidates/${file}`);
+            const expected = { width: index === 0 ? 1200 : 240, height: 487 };
+            for (const image of [before, after]) assert.deepEqual({ width: image.width, height: image.height }, expected);
+            return { file, before, after };
+          });
+          writeFileSync('baseline-review/images.json', JSON.stringify({ source: process.env.BASELINE_SOURCE_SHA, images }, null, 2));
+          const browser = await chromium.launch();
+          try {
+            const page = await browser.newPage();
+            for (const image of images) {
+              const input = Object.fromEntries(['before', 'candidates'].map(folder => [folder, readFileSync(`baseline-review/${folder}/${image.file}`).toString('base64')]));
+              const difference = await page.evaluate(async ({ before, candidates }) => {
+                const load = async data => {
+                  const image = new Image(); image.src = `data:image/png;base64,${data}`;
+                  await image.decode(); return image;
+                };
+                const oldImage = await load(before), newImage = await load(candidates);
+                const canvas = document.createElement('canvas');
+                canvas.width = oldImage.width; canvas.height = oldImage.height;
+                const context = canvas.getContext('2d');
+                context.drawImage(oldImage, 0, 0);
+                const oldPixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(newImage, 0, 0);
+                const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+                let changed = 0;
+                for (let i = 0; i < pixels.data.length; i += 4) {
+                  const different = [0, 1, 2, 3].some(offset => pixels.data[i + offset] !== oldPixels[i + offset]);
+                  if (different) changed++;
+                  pixels.data.set(different ? [255, 0, 255, 255] : [255, 255, 255, 255], i);
+                }
+                context.putImageData(pixels, 0, 0);
+                return { changed, png: canvas.toDataURL('image/png').split(',')[1] };
+              }, input);
+              image.rawRgbaChangedPixels = difference.changed;
+              writeFileSync(`baseline-review/diff/${image.file}`, Buffer.from(difference.png, 'base64'));
+            }
+          } finally { await browser.close(); }
+          writeFileSync('baseline-review/images.json', JSON.stringify({ source: process.env.BASELINE_SOURCE_SHA, images }, null, 2));
+          const sections = files.map(file => `<h2>${file}</h2><div class="pair"><figure><figcaption>Expected (original)</figcaption><a href="before/${file}"><img src="before/${file}" alt="Original"></a></figure><figure><figcaption>Actual (candidate)</figcaption><a href="candidates/${file}"><img src="candidates/${file}" alt="Candidate"></a></figure><figure><figcaption>Raw RGBA difference</figcaption><a href="diff/${file}"><img src="diff/${file}" alt="Magenta changed pixels"></a></figure></div>`).join('');
+          writeFileSync('baseline-review/index.html', `<!doctype html><meta charset="utf-8"><title>Contact baseline review</title><style>body{font:16px sans-serif}.pair{display:flex;gap:24px}figure{margin:0;min-width:0;flex:1}img{max-width:100%;height:auto}</style><h1>Contact baseline candidates</h1><p>Click images for native resolution. Magenta shows raw RGBA differences, independent of Playwright comparison thresholds. Review layout, colors, spacing, controls and typography before approval.</p>${sections}`);
+          console.log('::notice title=Candidate images::' + JSON.stringify(images));
+          NODE
+
+      - name: Strict Contact verification
+        id: contact
+        run: |
+          npx --no-install playwright test --config baseline-review/candidate.config.ts tests/accessibility.spec.ts --grep '(1440|320)px Contact visual regression$' --update-snapshots=none --output=test-results/contact-verification
+          cp test-results/results.json baseline-review/contact-results.json
+          cp -R playwright-report baseline-review/contact-report
+
+      - name: Full 109-test verification
+        id: full
+        run: |
+          npm test -- --config baseline-review/candidate.config.ts --update-snapshots=none --output=test-results/full-verification
+          cp test-results/results.json baseline-review/full-results.json
+
+      - name: Validate counts, font environment and unchanged originals
+        id: audit
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          import { writeFileSync } from 'node:fs';
+          const environments = {};
+          const visit = (suite, output) => {
+            for (const spec of suite.specs || []) for (const test of spec.tests || []) for (const result of test.results || []) {
+              for (const attachment of result.attachments || []) if (attachment.name === 'visual-environment') {
+                const metadata = JSON.parse(attachment.body ? Buffer.from(attachment.body, 'base64').toString() : readFileSync(attachment.path, 'utf8'));
+                assert.equal(metadata.deviceScaleFactor, 1); assert.equal(metadata.locale, 'en-US');
+                assert.equal(metadata.timezone, 'UTC'); assert.equal(metadata.theme, 'night');
+                assert.equal(metadata.fontsStatus, 'loaded'); assert.equal(metadata.browserVersion, '156.0.8078.4');
+                assert.equal(metadata.nodeVersion, 'v24.21.0'); assert.equal(metadata.playwrightVersion, '1.64.1');
+                for (const fonts of Object.values(metadata.platformFonts)) {
+                  assert.ok(fonts.some(font => font.isCustomFont && font.familyName === 'Inter' && font.glyphCount > 0));
+                }
+                output[metadata.viewport.width] = metadata;
+              }
+            }
+            for (const child of suite.suites || []) visit(child, output);
+          };
+          for (const [phase, count] of [['generation', 2], ['contact', 2], ['full', 109]]) {
+            const report = JSON.parse(readFileSync(`baseline-review/${phase}-results.json`, 'utf8'));
+            assert.equal(report.stats.expected, count);
+            for (const field of ['unexpected', 'skipped', 'flaky']) assert.equal(report.stats[field], 0);
+            environments[phase] = {}; for (const suite of report.suites) visit(suite, environments[phase]);
+            assert.deepEqual(Object.keys(environments[phase]).sort(), ['1440', '320']);
+            console.log(`::notice title=Verified ${phase}::${count} passed; 0 failed/skipped/flaky`);
+          }
+          const stable = metadata => ({ browserVersion: metadata.browserVersion, viewport: metadata.viewport,
+            deviceScaleFactor: metadata.deviceScaleFactor, locale: metadata.locale, timezone: metadata.timezone,
+            theme: metadata.theme, fontAssets: metadata.fontAssets, platformFonts: metadata.platformFonts });
+          for (const width of ['1440', '320']) {
+            for (const phase of ['contact', 'full']) assert.deepEqual(stable(environments[phase][width]), stable(environments.generation[width]));
+            const info = environments.generation[width];
+            console.log(`::notice title=Font diagnostics ${width}::` + JSON.stringify({ fonts: info.platformFonts, assets: info.fontAssets, dpr: info.deviceScaleFactor, locale: info.locale, timezone: info.timezone }));
+          }
+          writeFileSync('baseline-review/environments.json', JSON.stringify(environments, null, 2));
+          assert.equal(execFileSync('git', ['diff', '--name-only'], { encoding: 'utf8' }).trim(), '');
+          for (const file of ['contact-night-1440-linux.png', 'contact-night-320-linux.png']) {
+            const original = readFileSync(`baseline-review/before/${file}`);
+            assert.deepEqual(readFileSync(`tests/accessibility.spec.ts-snapshots/${file}`), original);
+          }
+          console.log('::notice title=Original baseline preservation::Both tracked PNGs and all tracked source files remain unchanged');
+          NODE
+
+      - name: Upload candidates and evidence without committing
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: contact-baseline-review-${{ github.run_id }}
+          path: |
+            baseline-review/
+            playwright-report/
+            test-results/
+          retention-days: 7
+          include-hidden-files: false
+          if-no-files-found: warn
+
+      - name: Review summary
+        if: ${{ !cancelled() }}
+        env:
+          GENERATE: ${{ steps.generate.outcome }}
+          CONTACT: ${{ steps.contact.outcome }}
+          FULL: ${{ steps.full.outcome }}
+          AUDIT: ${{ steps.audit.outcome }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs';
+          const lines = ['## Contact baseline candidates', `Source: ${process.env.BASELINE_SOURCE_SHA}`, `Generation: ${process.env.GENERATE || 'not run'}`, `Strict Contact: ${process.env.CONTACT || 'not run'}`, `Full suite: ${process.env.FULL || 'not run'}`, `Evidence audit: ${process.env.AUDIT || 'not run'}`, 'Download the artifact, review original/candidate/diff PNGs at native resolution and compare visual-environment font metadata across generation and verification. No baseline is committed automatically.'];
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n\n') + '\n');
+          NODE

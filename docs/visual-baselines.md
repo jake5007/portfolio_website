@@ -1,5 +1,11 @@
 # Contact 시각 회귀 기준 관리
 
+> 최신 상태: 사용자가 고정 컨테이너의 원격 후보 생성을 승인했다. 실행 파일은
+> `.github/workflows/contact-baselines.yml`, 검토용 동일 템플릿은
+> `docs/contact-baseline-generation.workflow.yml`이다. 승인된 앱 SHA만 검사하며
+> 원래 PNG는 원격 checkout에서도 수정하지 않는다. 생성 결과는 artifact로만 검토한다.
+> 아래의 과거 조사 기록과 최신 원격 실행 절차를 구분한다.
+
 ## 확인된 사실과 남은 가설
 
 기준 PNG 두 개는 Step 5 커밋 `165f53d`에서 추가했다. 당시 실행 기록은
@@ -132,7 +138,7 @@ tests/accessibility.spec.ts-snapshots/contact-night-320-linux.png
 ```
 
 생성 후 같은 환경에서 `--update-snapshots=none`으로 두 검사를 다시 수행하고,
-전체 108개도 실행한다. 최종 diff/metadata와 후보 PNG를 사람이 검토·승인한 뒤에만
+전체 109개도 실행한다. 최종 diff/metadata와 후보 PNG를 사람이 검토·승인한 뒤에만
 원래 checkout의 위 두 파일로 복사한다. 다른 baseline은 변경하지 않는다.
 이 문서의 update 명령은 현재 승인이나 자동 갱신 지시를 뜻하지 않는다.
 
@@ -174,3 +180,124 @@ tests/accessibility.spec.ts-snapshots/contact-night-320-linux.png
 `tests/accessibility.spec.ts`의 진단 첨부, `docs/ci.md`, 이 문서이다.
 승인 후 표준 이미지에서 의도된 UI임을 검토한 경우에만 Contact 기준 두 파일의
 재생성을 제안한다. 현재는 두 PNG 교체·커밋·push 모두 보류한다.
+
+
+## 승인된 원격 후보 생성
+
+앱 기준 SHA는 `cf99a83ae8f76ae1541fde1e3195f097556461a5`이다. 사용자는 run
+`39118358487`의 artifact를 독립 검토한 뒤 두 Contact 후보 생성을 승인했다.
+로컬 Docker 다운로드는 `Forbidden`으로 차단됐으므로 시스템 Chromium으로 새
+기준을 만들지 않고 동일 고정 이미지의 GitHub Actions job에서 생성한다.
+
+### 일회성 실행 제한
+
+- 실행 workflow: `.github/workflows/contact-baselines.yml`.
+  검토·보존용 동일 템플릿: [contact-baseline-generation.workflow.yml](contact-baseline-generation.workflow.yml).
+- push trigger는 `refactor/portfolio-modernization` 및 실행 workflow 경로 변경으로 한정한다.
+- job에서도 저장소·push 이벤트·브랜치를 재확인한다. push 이전 SHA가 정확히
+  `cf99a83ae8f76ae1541fde1e3195f097556461a5`이고 head commit 메시지가
+  `ci: add controlled Contact baseline generation`인 첫 실행만 허용한다.
+- forced push와 `run_attempt != 1`을 거부한다. 이후 일반 push는 경로 필터 또는
+  이전 SHA 조건에 걸려 후보를 재생성하지 않는다. 단순 rerun도 실행하지 않는다.
+  실패 시 새로운 실행 승인을 받고 guard를 명시적으로 재검토해야 한다.
+- 원격 앱 checkout은 trigger commit과 별도로 승인된 전체 SHA에 고정한다.
+  checkout 후 SHA를 다시 검사하며 임의 입력 ref나 PR 코드는 실행하지 않는다.
+- `contents: read`, `persist-credentials: false`, 빈 SMTP 계정값을 사용한다.
+  secret, write 권한, PR/배포/commit/push 명령은 workflow에 없다.
+- main과 기존 `ci.yml`은 변경하지 않는다. 일반 CI는 이 push에도 실행되므로
+  기존 PNG의 두 실패가 계속 표시될 수 있으며, 후보 job과 구분해 확인한다.
+
+### 환경 및 원본 보존
+
+기존 CI와 동일한 공식 `v1.64.1-noble` 전체 digest 및 linux/amd64를 사용한다.
+이미지의 Node v24.21.0과 bundled Chromium 156.0.8078.4를 launch해 확인한다.
+Playwright 1.64.1은 승인된 lockfile의 `npm ci`로 설치한다. setup-node, apt,
+브라우저 재설치, executable override는 사용하지 않는다.
+
+DPR 1, en-US, UTC, Night, reduced-motion, 1440×900 / 320×900 및 기존 폰트 로딩
+대기는 원래 config/test에서 상속한다. Inter의 실제 glyph/custom-font 여부와
+WOFF2 해시를 수집하고 생성/Contact 재검증/전체 실행 사이에 일치하는지 확인한다.
+폰트 다운로드는 이미지 외부 입력이므로 이미지 digest만으로 폰트 일치를 추정하지 않는다.
+
+원본 둘을 `baseline-review/before/`에 복사하고 **원본은 그대로 둔다**.
+`baseline-review/candidate.config.ts`는 기존 config를 상속하되 public
+`snapshotPathTemplate`만 별도 candidate 디렉터리로 바꾸고 testDir/report/server cwd를
+명시한다. 앱/테스트 소스와 픽셀 허용치를 바꾸지 않는다. 생성 이후와 최종 audit에서
+tracked diff가 비어 있는지 및 원래 PNG 바이트가 before와 같은지 검사한다.
+
+정확한 원본 경로:
+
+```text
+tests/accessibility.spec.ts-snapshots/contact-night-1440-linux.png
+tests/accessibility.spec.ts-snapshots/contact-night-320-linux.png
+```
+
+정확한 후보 경로(원격 작업 공간 및 artifact 안):
+
+```text
+baseline-review/candidates/contact-night-1440-linux.png
+baseline-review/candidates/contact-night-320-linux.png
+```
+
+후보 디렉터리에 이 두 파일만 있어야 하고 크기는 1200×487 / 240×487로 유지돼야 한다.
+
+### 컨테이너 내부 명령
+
+```sh
+npm ci
+npm run lint
+npm run build
+npm run typecheck -- --incremental false
+
+# 후보 경로에만 두 이미지를 생성
+npx --no-install playwright test --config baseline-review/candidate.config.ts \
+  tests/accessibility.spec.ts --grep '(1440|320)px Contact visual regression$' \
+  --update-snapshots=all --output=test-results/generation
+
+# 같은 build에서 후보를 기준으로 엄격 비교: 기존 maxDiffPixels: 0 유지
+npx --no-install playwright test --config baseline-review/candidate.config.ts \
+  tests/accessibility.spec.ts --grep '(1440|320)px Contact visual regression$' \
+  --update-snapshots=none --output=test-results/contact-verification
+
+# 전체 109개도 후보 경로를 사용하고 update는 금지
+npm test -- --config baseline-review/candidate.config.ts \
+  --update-snapshots=none --output=test-results/full-verification
+```
+
+phase별 결과는 2/2/109 통과, fail/skip/flaky 0이어야 한다. candidate용 config가
+외부에 있다는 이유로 tests를 누락하거나 webServer cwd가 달라지지 않도록 경로를
+명시한다. 기존 두 Contact 외에는 snapshot assertion이 없음을 확인했다.
+
+### Artifact와 검토
+
+`contact-baseline-review-<run-id>` artifact(7일 보존)에는 다음이 포함된다.
+
+- `before/`: 원본 expected 두 장; `candidates/`: 실제 생성 후보 두 장.
+- `diff/`: 브라우저 canvas의 raw RGBA 비교로 만든 차이 이미지. magenta는 변경된
+  픽셀이다. 이 진단 수치는 Playwright의 비교 알고리즘/threshold와 구분하며 assertion을 대체하지 않는다.
+- `images.json`: source SHA, 크기, old/new SHA-256과 raw RGBA 차이 수.
+- `index.html`: expected/candidate/diff 나란히 보기. 이미지를 눌러 원본 배율로 검사한다.
+- `runtime.json`, `environments.json`: OS/브라우저/폰트 진단. public notice에도
+  런타임, phase별 통과 수, 폰트·WOFF2 해시와 원본 보존 결과를 남긴다.
+- 생성/Contact 재검증의 JSON·HTML 보고서, 전체 109개 JSON·HTML 보고서,
+  각 phase의 test-results와 실패 시 trace/screenshot.
+
+font audit는 두 viewport에서 Inter custom glyph, DPR/locale/timezone/theme,
+브라우저와 Node 버전을 확인하고 phase 사이 폰트/WOFF2 입력의 일치를 검사한다.
+실패 시에도 가능한 artifact와 Summary를 남기며 그 결과를 통과로 취급하지 않는다.
+
+사람이 가시성·색상·간격·정렬·줄바꿈·컨트롤·폰트 크기와 굵기를 확인해야 한다.
+크기가 같거나 테스트가 통과했다는 이유만으로 후보를 자동 승인하지 않는다.
+현재 승인은 **후보 생성과 artifact 제공만** 포함한다. 로컬 원본에 후보를 복사하거나
+기준 PNG를 commit/push하는 작업은 이후 명시적인 승인 전까지 금지한다.
+임시 workflow는 이번 작업 후에도 제거하지 않는다.
+
+### 준비 검증 이력
+
+- 기존 로컬 환경(Debian 13 / Chromium 154)에서 이전 전체 109개가 통과했다.
+  이 결과는 새 컨테이너 후보 검증을 대신하지 않는다.
+- workflow와 템플릿이 같고 기존 CI의 전체 image digest와 같은지 검증한다.
+- actionlint, YAML/쉘/inline Node 문법, 일회성 guard 허용/거부 조건을 확인한다.
+- 별도 config의 경로 분리는 `/tmp`에 복사한 기존 PNG 두 장을 이용한 로컬 엄격
+  비교로 확인한다. 그 과정에서 컨테이너 후보를 생성하거나 원본을 덮어쓰지 않는다.
+- 실제 원격 결과와 artifact URL은 이번 실행이 끝난 뒤 사용자 보고에서 확인한다.
