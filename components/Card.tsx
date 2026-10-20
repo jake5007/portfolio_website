@@ -19,15 +19,15 @@ const Card = ({ title, desc, imgSrc, liveURL, gitURL }: CardProps) => {
           className="w-full h-auto object-cover transition duration-200 group-hover:ease-in group-hover:scale-110"
         />
         <div
-          className="group-hover:flex justify-center items-center gap-3 hidden 
+          className="project-actions flex justify-center items-center gap-3
           absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.5)] z-10"
         >
-          <Link href={liveURL} target="_blank">
+          <Link href={liveURL} target="_blank" rel="noopener noreferrer" aria-label={`${title}: live site (opens in a new tab)`}>
             <div className="border p-2 rounded-xl">
               <ArrowTopRightOnSquareIcon className="w-10 h-10 text-[#fff]" />
             </div>
           </Link>
-          <Link href={gitURL} target="_blank">
+          <Link href={gitURL} target="_blank" rel="noopener noreferrer" aria-label={`${title}: source code (opens in a new tab)`}>
             <div className="border p-2 rounded-xl">
               <CodeBracketIcon className="w-10 h-10 text-[#fff]" />
             </div>
@@ -35,7 +35,7 @@ const Card = ({ title, desc, imgSrc, liveURL, gitURL }: CardProps) => {
         </div>
       </figure>
       <div className="card-body rounded-b-2xl">
-        <h2 className="card-title xl:text-2xl">{title}</h2>
+        <h3 className="card-title xl:text-2xl">{title}</h3>
         <p className="xl:text-lg">{desc}</p>
       </div>
     </div>

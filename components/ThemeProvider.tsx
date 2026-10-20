@@ -1,21 +1,33 @@
 "use client";
 
 import { useThemeStore } from "@/store/useThemeStore";
-import { useHasHydrated } from "@/hook/useHasHydrated";
 import { useEffect, useState } from "react";
 import { ChevronsUpIcon } from "lucide-react";
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const theme = useThemeStore((state) => state.theme);
-  const hasHydrated = useHasHydrated();
-
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    if (hasHydrated) {
-      document.documentElement.setAttribute("data-theme", theme);
-    }
-  }, [theme, hasHydrated]);
+    let active = true;
+    const applyTheme = () => {
+      if (active) {
+        document.documentElement.setAttribute(
+          "data-theme",
+          useThemeStore.getState().theme
+        );
+      }
+    };
+
+    const unsubscribe = useThemeStore.subscribe(applyTheme);
+    // The first client render uses the same default as SSR. The head script
+    // has already applied any saved theme without changing React-owned content.
+    Promise.resolve(useThemeStore.persist?.rehydrate()).then(applyTheme);
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,25 +44,23 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   }, [setShowScrollTop]);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+    });
+    document.getElementById("main-content")?.focus({ preventScroll: true });
   };
-
-  if (!hasHydrated) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="loading loading-dots loading-xl" />
-      </div>
-    );
-  }
 
   return (
     <>
       {children}
       {showScrollTop && (
         <button
+          type="button"
+          aria-label="Back to top"
           onClick={scrollToTop}
           className="btn btn-circle btn-primary fixed bottom-8 right-8 shadow-xl
-          opacity-60 hover:opacity-100 transition-opacity duration-200"
+          hover:opacity-90 transition-opacity duration-200"
         >
           <ChevronsUpIcon className="size-8" />
         </button>

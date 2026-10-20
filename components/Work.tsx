@@ -10,12 +10,12 @@ const Work = () => {
   const [currTab, setCurrTab] = useState("all");
 
   return (
-    <section id="work" className="sm:mt-5">
-      <h1 className="text-primary text-center text-2xl md:text-3xl font-bold">
+    <section id="work" tabIndex={-1} className="sm:mt-5">
+      <h2 className="text-primary text-center text-2xl md:text-3xl font-bold">
         My Work
-      </h1>
+      </h2>
 
-      <div className="flex gap-4 justify-center my-6">
+      <div role="group" aria-label="Project categories" className="flex gap-4 justify-center my-6">
         {workTabs.map((tab) => (
           <TabBtn
             key={tab.id}

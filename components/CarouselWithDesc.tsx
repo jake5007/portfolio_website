@@ -16,6 +16,10 @@ const CarouselWithDesc = ({
   return (
     <>
       <div
+        role="region"
+        aria-label={`${title} photos`}
+        tabIndex={0}
+        data-entrance
         className={`md:col-span-2 mt-5 carousel carousel-center 
         max-w-[1000px] p-4 space-x-4 bg-neutral rounded-box overflow-y-hidden 
         ${evenImgGridStyle} relative`}
@@ -29,7 +33,7 @@ const CarouselWithDesc = ({
           <div key={idx} className="carousel-item max-w-[500px]">
             <Image
               src={item}
-              alt="image"
+              alt={`${title}, photo ${idx + 1}`}
               width={0}
               height={0}
               sizes="100vw"
@@ -42,6 +46,7 @@ const CarouselWithDesc = ({
       </div>
 
       <div
+        data-entrance
         className={`${evenDescGridStyle}`}
         style={{
           transform: isInView ? "none" : "translateY(-100px)",
@@ -49,9 +54,9 @@ const CarouselWithDesc = ({
           transition: "all 0.7s cubic-bezier(0.17, 0.55, 0.55, 1) 0.8s",
         }}
       >
-        <h1 className="text-xl lg:text-2xl capitalize font-bold">
+        <h3 className="text-xl lg:text-2xl capitalize font-bold">
           {id}. {title}
-        </h1>
+        </h3>
         <p className="mt-2 text-lg">{desc}</p>
       </div>
     </>

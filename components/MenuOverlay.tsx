@@ -1,12 +1,12 @@
 import NavLink from "./NavLink";
 import type { MenuOverlayProps } from "@/types";
 
-const MenuOverlay = ({ links }: MenuOverlayProps) => {
+const MenuOverlay = ({ links, onNavigate }: MenuOverlayProps) => {
   return (
-    <ul className="flex md:hidden flex-col items-center">
+    <ul id="mobile-navigation" className="flex md:hidden flex-col items-center">
       {links.map((link) => (
         <li key={link.title}>
-          <NavLink href={link.path} title={link.title} />
+          <NavLink href={link.path} title={link.title} onClick={() => onNavigate(link.path)} />
         </li>
       ))}
     </ul>
