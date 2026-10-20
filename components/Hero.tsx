@@ -1,14 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 import TypewriterName from "@/components/TypewriterName";
 import { motion } from "framer-motion";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const Hero = () => {
   const reducedMotion = usePrefersReducedMotion();
-  const [animationStopped, setAnimationStopped] = useState(false);
   return (
     <section>
       <div className="grid grid-cols-1 sm:grid-cols-12">
@@ -24,14 +22,9 @@ const Hero = () => {
             </span>
             <br />
             <span className="sr-only">현진, Hyunjin, QA Engineer</span>
-            <span aria-hidden="true" className={animationStopped ? "static-name" : "reduced-motion-name"}>현진</span>
-            {!reducedMotion && !animationStopped && <span aria-hidden="true" className="motion-typing"><TypewriterName /></span>}
+            <span aria-hidden="true" className="reduced-motion-name">현진</span>
+            {!reducedMotion && <span aria-hidden="true" className="motion-typing"><TypewriterName /></span>}
           </h1>
-          {!reducedMotion && <button type="button"
-            className="motion-control btn btn-ghost btn-xs mb-3"
-            onClick={() => setAnimationStopped(!animationStopped)}>
-            {animationStopped ? "Restart animation" : "Stop animation"}
-          </button>}
           <p className="text-base sm:text-lg lg:text-xl text-left">
             With a background in software development, I focus on improving
             software quality through systematic testing, problem-solving, and

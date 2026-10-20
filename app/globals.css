@@ -106,7 +106,7 @@ figure:hover .project-actions, figure:focus-within .project-actions {
     transform: none !important;
     transition: none !important;
   }
-  .motion-typing, .motion-control { display: none; }
+  .motion-typing { display: none; }
   .reduced-motion-name { display: inline; }
   .group:hover img { transform: none; }
 }

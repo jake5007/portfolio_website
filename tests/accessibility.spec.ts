@@ -309,18 +309,12 @@ test("normal motion remains available without hydration or console errors", asyn
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await load(page);
   await expect(page.locator(".motion-typing")).toBeVisible();
-  const scan = await new AxeBuilder({ page }).include(".motion-control").withTags(["wcag2a", "wcag2aa", "wcag22aa"]).analyze();
+  const scan = await new AxeBuilder({ page }).include(".hero-intro").withTags(["wcag2a", "wcag2aa", "wcag22aa"]).analyze();
   expect(scan.violations).toEqual([]);
   await expect(page.locator(".reduced-motion-name")).toBeHidden();
   const transition = await page.locator("[data-entrance]").first().evaluate((n) => getComputedStyle(n).transitionDuration);
   expect(parseFloat(transition)).toBeGreaterThan(0);
-  await page.getByRole("button", { name: "Stop animation", exact: true }).click();
-  await expect(page.locator(".motion-typing")).toHaveCount(0);
-  await expect(page.locator(".static-name")).toHaveText("현진");
-  const restart = page.getByRole("button", { name: "Restart animation", exact: true });
-  await expect(restart).toBeFocused();
-  await restart.press("Space");
-  await expect(page.locator(".motion-typing")).toBeVisible();
+  await expect(page.getByRole("button", { name: /^(Stop|Restart) animation$/i })).toHaveCount(0);
 });
 
 for (const width of [320, 360, 390, 768, 1440]) {
