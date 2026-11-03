@@ -31,13 +31,13 @@ const Hero = () => {
             automation.
           </p>
           <div className="mt-4">
-            <a href="#contact" className="hire-link inline-block px-8 py-3 mb-4 rounded-full bg-gradient-to-br from-primary via-secondary to-accent hover:underline w-full sm:w-fit">
+            <a href="#contact" className="hire-link inline-block px-8 py-3 mb-4 rounded-full text-base-content bg-gradient-to-br from-primary via-secondary to-accent hover:opacity-80 transition-opacity duration-200 w-full sm:w-fit">
                 Hire Me
             </a>
           </div>
         </motion.div>
-        <div className="sm:col-span-5 min-w-0 max-w-full place-self-center mt-4 lg:mt-0">
-          <div className="bg-[#212121] rounded-full w-[250px] max-w-full aspect-square lg:w-[400px] relative">
+        <div className="sm:col-span-5 min-w-0 place-self-center mt-4 lg:mt-0">
+          <div className="bg-[#212121] rounded-full w-[250px] max-w-[calc(100vw-2rem)] aspect-square lg:w-[400px] relative">
             <Image
               src="/images/programming-image.svg"
               alt="Illustration of a person programming"

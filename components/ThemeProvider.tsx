@@ -60,7 +60,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
           aria-label="Back to top"
           onClick={scrollToTop}
           className="btn btn-circle btn-primary fixed bottom-8 right-8 shadow-xl
-          hover:opacity-90 transition-opacity duration-200"
+          opacity-60 hover:opacity-100 transition-opacity duration-200"
         >
           <ChevronsUpIcon className="size-8" />
         </button>

@@ -26,7 +26,7 @@ const ThemeSelector = () => {
   };
 
   return (
-    <div ref={root} className="relative" onKeyDown={(event) => {
+    <div ref={root} className={`dropdown dropdown-end ${open ? "dropdown-open" : ""}`} onKeyDown={(event) => {
       if (event.key === "Escape" && open) {
         event.preventDefault();
         event.stopPropagation();
@@ -40,12 +40,16 @@ const ThemeSelector = () => {
         onClick={() => setOpen(!open)}>
         <PaletteIcon className="size-5" />
       </button>
-      <div id="theme-options" role="group" aria-label="Themes" hidden={!open}
-        className="absolute right-0 top-full mt-2 p-1 shadow-2xl bg-base-200 backdrop-blur-lg rounded-2xl w-56 border border-base-content/10">
+      {/* Keep the panel rendered for the original opacity/scale transition.
+          Inert removes closed choices from Tab/AT; inline closed styles also
+          override DaisyUI's focus-within opening when Escape restores focus. */}
+      <div id="theme-options" role="group" aria-label="Themes" aria-hidden={!open} inert={!open}
+        style={open ? undefined : { visibility: "hidden", opacity: 0, transform: "scale(0.95)", pointerEvents: "none" }}
+        className="dropdown-content mt-2 p-1 shadow-2xl bg-base-200 backdrop-blur-lg rounded-2xl w-56 border border-base-content/10">
         {themes.map((theme) => (
           <button type="button" key={theme.name} aria-pressed={currTheme === theme.name}
             className={`w-full px-4 py-3 rounded-xl flex items-center gap-3 transition-colors ${currTheme === theme.name ? "bg-primary/10 text-primary" : "hover:bg-base-content/5"}`}
-            onClick={() => { setCurrTheme(theme.name); close(); }}>
+            onClick={() => setCurrTheme(theme.name)}>
             <PaletteIcon className="size-4" />
             <span className="text-sm font-medium">{theme.label}</span>
             <span aria-hidden="true" className="ml-auto flex gap-1">

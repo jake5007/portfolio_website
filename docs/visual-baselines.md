@@ -1,5 +1,13 @@
 # Contact 시각 회귀 기준 관리
 
+## 2026-11-02 디자인 복원 검토 중
+
+사용자가 원본 main 디자인 복원을 승인했다. 기존 PNG는 Step 5의 placeholder/경계색
+변경을 포함하므로 원본 main보다 우선하는 디자인 기준이 아니다. 관련 내용은
+[디자인 복원 기록](design-restoration.md)에 있다. 현재 두 PNG의 해시는 유지하며
+strict 비교는 계속 실행한다. 복원으로 인한 실패를 skip이나 허용값 조정으로 숨기지 않는다.
+기준 후보 생성·교체는 별도 승인 후 pinned CI 환경에서 main과 비교해 검토해야 한다.
+
 ## 승인된 기준과 출처
 
 사용자는 [후보 생성 run 39253480264](https://github.com/jake5007/portfolio_website/actions/runs/39253480264)의

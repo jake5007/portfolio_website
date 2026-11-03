@@ -61,7 +61,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav ref={nav} aria-label="Main navigation" className="bg-base-100 border-b border-base-content/10 sticky top-0 z-50 py-1">
+    <nav ref={nav} aria-label="Main navigation" className="bg-base-100/80 backdrop-blur-lg border-b border-base-content/10 sticky top-0 z-50 py-1">
       <div className="flex items-center justify-between mx-auto px-7">
         <div className="flex gap-5 sm:gap-8">
           <Link

@@ -28,9 +28,9 @@ test("typing repeats all names and retains the blinking cursor without a stop co
     return { texts, observer };
   });
   try {
-    // Run recursive timers through more than two full cycles, rather than
-    // checking just the presence of the animation element.
-    await page.clock.runFor(12_000);
+    // Two full cycles even at the original maximum 75ms random keystroke
+    // delay take less than 14s; execute timers rather than waiting wall time.
+    await page.clock.runFor(14_000);
     const texts = await animation.evaluate(({ texts }) => texts);
     for (const name of ["현진", "Hyunjin", "QA Engineer"]) {
       expect(texts.filter(text => text === name).length).toBeGreaterThanOrEqual(2);

@@ -10,6 +10,10 @@ export function startTypewriter(onText: (text: string) => void): () => void {
   let deleting = false;
   let timer: ReturnType<typeof setTimeout>;
 
+  // react-type-animation speed={50}: 50ms with +/-50% random jitter.
+  // Keep the original rhythm without bringing back its unmount timer leak.
+  const keystrokeDelay = () => 50 + 50 * (Math.random() - 0.5);
+
   function schedule(delay: number) {
     if (active) timer = setTimeout(tick, delay);
   }
@@ -27,11 +31,11 @@ export function startTypewriter(onText: (text: string) => void): () => void {
         deleting = false;
         wordIndex = (wordIndex + 1) % words.length;
       }
-      schedule(50);
+      schedule(keystrokeDelay());
     }
   }
 
-  schedule(50);
+  schedule(keystrokeDelay());
   return () => {
     active = false;
     clearTimeout(timer);

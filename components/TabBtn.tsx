@@ -9,7 +9,7 @@ const TabBtn = ({
   return (
     <button type="button" aria-pressed={active} onClick={onTabChange}>
       <span
-        className={`relative inline-block font-semibold sm:hover:underline ${customTextClasses ?? ""} ${
+        className={`relative inline-block font-semibold sm:hover:opacity-80 transition-opacity duration-200 ${customTextClasses ?? ""} ${
           active ? "" : "text-base-content/80"
         }`}
       >

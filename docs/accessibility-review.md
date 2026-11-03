@@ -1,5 +1,9 @@
 # Step 5 접근성·모바일 UX 검토
 
+이 문서는 Step 5 도입 당시의 이력이다. 2026-11-02 사용자 승인에 따른 원본 디자인
+복원과 항목별 색 대비 Known Issue는 [디자인 복원 기록](design-restoration.md)을 따른다.
+아래의 색 보정·불투명 Navbar·상시 터치 overlay·선택 후 테마 메뉴 닫기는 현재 디자인 계약이 아니다.
+
 검토 기준: WCAG 2.2 AA의 적용 가능한 항목. 기준 커밋은
 `33f4d0a32f2782fc3e51438e6664cb3284149c81`, 브랜치는
 `refactor/portfolio-modernization`이다. 수정 전 작업 트리는 깨끗했다.

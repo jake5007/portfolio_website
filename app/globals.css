@@ -2,64 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Keep theme surfaces intact; adjust only ink and gradient stops that fail AA. */
-:root {
-  --readable-primary: oklch(var(--p));
-  --readable-secondary: oklch(var(--s));
-  --readable-accent: oklch(var(--a));
-  --cta-primary: oklch(var(--p));
-  --cta-secondary: oklch(var(--s));
-  --cta-accent: oklch(var(--a));
-  --cta-ink: #000;
-}
-[data-theme="autumn"] {
-  --readable-secondary: color-mix(in oklch, oklch(var(--s)), black 5%);
-  --readable-accent: color-mix(in oklch, oklch(var(--a)), black 25%);
-  --cta-secondary: color-mix(in oklch, oklch(var(--s)), black 10%);
-  --cta-accent: color-mix(in oklch, oklch(var(--a)), black 25%);
-  --cta-ink: #fff;
-}
-[data-theme="pastel"] {
-  --readable-primary: color-mix(in oklch, oklch(var(--p)), black 40%);
-  --readable-secondary: color-mix(in oklch, oklch(var(--s)), black 30%);
-  --readable-accent: color-mix(in oklch, oklch(var(--a)), black 30%);
-}
-[data-theme="coffee"] {
-  --readable-secondary: color-mix(in oklch, oklch(var(--s)), white 30%);
-  --readable-accent: color-mix(in oklch, oklch(var(--a)), white 15%);
-  --cta-secondary: color-mix(in oklch, oklch(var(--s)), white 35%);
-  --cta-accent: color-mix(in oklch, oklch(var(--a)), white 25%);
-}
-[data-theme="luxury"] {
-  --readable-secondary: color-mix(in oklch, oklch(var(--s)), white 35%);
-  --readable-accent: color-mix(in oklch, oklch(var(--a)), white 25%);
-  --cta-secondary: color-mix(in oklch, oklch(var(--s)), white 40%);
-  --cta-accent: color-mix(in oklch, oklch(var(--a)), white 35%);
-}
-[data-theme="valentine"] {
-  --readable-primary: color-mix(in oklch, oklch(var(--p)), black 35%);
-  --readable-secondary: color-mix(in oklch, oklch(var(--s)), black 20%);
-  --readable-accent: color-mix(in oklch, oklch(var(--a)), black 25%);
-}
-.text-primary { color: var(--readable-primary); }
-.readable-gradient {
-  color: transparent;
-  background-image: linear-gradient(to right, var(--readable-primary), var(--readable-secondary), var(--readable-accent));
-}
-.logo-gradient {
-  background-image: linear-gradient(to right, var(--readable-primary), var(--readable-secondary));
-}
-.hire-link {
-  color: var(--cta-ink);
-  background-image: linear-gradient(to bottom right, var(--cta-primary), var(--cta-secondary), var(--cta-accent));
-}
-.input-primary, .textarea-primary,
-.input-primary:focus, .textarea-primary:focus { border-color: var(--readable-primary); }
-input::placeholder, textarea::placeholder {
-  color: color-mix(in oklch, oklch(var(--bc)), oklch(var(--b1)) 10%);
-  opacity: 1;
-}
-
+/* Original theme colors come from DaisyUI/Tailwind. Contrast limitations
+   are explicitly documented in docs/design-restoration.md. */
 :root :is(a, button, input, textarea, [tabindex]):focus-visible {
   outline: 2px solid oklch(var(--bc));
   outline-offset: 3px;
@@ -83,9 +27,6 @@ figure:hover .project-actions, figure:focus-within .project-actions {
   pointer-events: auto;
 }
 :root .project-actions a:focus-visible { outline-color: #fff; }
-@media (hover: none), (pointer: coarse) {
-  .project-actions { opacity: 1; pointer-events: auto; }
-}
 
 .typewriter-name::after {
   content: "|";

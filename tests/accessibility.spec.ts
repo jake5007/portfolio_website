@@ -6,6 +6,7 @@ import { basename, join } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { themes } from "../data";
 import { observeNavigationFocus, attachNavigationFocus, navigationFocusStep } from "./navigation-focus-diagnostics";
+import { originalContrastExceptions, partitionOriginalContrast } from "./original-contrast-policy";
 
 test.use({ reducedMotion: "reduce" });
 const browserErrors = new WeakMap<Page, string[]>();
@@ -180,9 +181,14 @@ test("all themes support keyboard selection, Escape, outside dismissal and persi
     for (let i = 0; i <= themes.indexOf(theme); i++) await page.keyboard.press("Tab");
     await expect(choice).toBeFocused();
     await choice.press("Space");
-    await expect(trigger).toBeFocused();
+    await expect(choice).toBeFocused();
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await expect(choice).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme.name);
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem("portfolio-theme")!).state.theme)).toBe(theme.name);
+    await choice.press("Escape");
+    await expect(trigger).toBeFocused();
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
   }
   await page.reload({ waitUntil: "networkidle" });
   await expect(page.locator("html")).toHaveAttribute("data-theme", "valentine");
@@ -217,10 +223,13 @@ test("project links reveal on keyboard focus and activate safely", async ({ page
 
 test.describe("touch navigation", () => {
   test.use({ viewport: { width: 320, height: 900 }, isMobile: true, hasTouch: true });
-  test("project actions are present without hover and have adequate target sizes", async ({ page }) => {
+  test("project actions reveal on the first image tap and have adequate target sizes", async ({ page }) => {
     await load(page);
-    const action = page.locator("#work figure a").first();
-    await action.scrollIntoViewIfNeeded();
+    const figure = page.locator("#work figure").first();
+    const action = figure.getByRole("link").first();
+    await figure.scrollIntoViewIfNeeded();
+    await expect(action.locator("..")).toHaveCSS("opacity", "0");
+    await figure.tap({ position: { x: 5, y: 5 } });
     await expect(action.locator("..")).toHaveCSS("opacity", "1");
     const bounds = await action.boundingBox();
     expect(bounds!.width).toBeGreaterThanOrEqual(44);
@@ -310,7 +319,7 @@ test("normal motion remains available without hydration or console errors", asyn
   await load(page);
   await expect(page.locator(".motion-typing")).toBeVisible();
   const scan = await new AxeBuilder({ page }).include(".hero-intro").withTags(["wcag2a", "wcag2aa", "wcag22aa"]).analyze();
-  expect(scan.violations).toEqual([]);
+  expect((await partitionOriginalContrast(page, "night", scan.violations)).unexpected).toEqual([]);
   await expect(page.locator(".reduced-motion-name")).toBeHidden();
   const transition = await page.locator("[data-entrance]").first().evaluate((n) => getComputedStyle(n).transitionDuration);
   expect(parseFloat(transition)).toBeGreaterThan(0);
@@ -322,6 +331,10 @@ for (const width of [320, 360, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await load(page);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+    const categoryRows = new Set(await page.getByRole("group", { name: "About categories" })
+      .getByRole("button").evaluateAll(buttons => buttons.map(button => Math.round(button.getBoundingClientRect().y))));
+    if (width >= 360) expect(categoryRows.size).toBe(1);
+    else expect(categoryRows.size).toBeGreaterThan(1);
     await page.getByRole("button", { name: "Choose theme" }).click();
     const bounds = await page.getByRole("group", { name: "Themes", exact: true }).boundingBox();
     expect(bounds!.x).toBeGreaterThanOrEqual(0);
@@ -387,14 +400,31 @@ for (const width of [1440, 320]) {
       await page.locator("#hobbies").scrollIntoViewIfNeeded();
       const scan = () => new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]);
       const closed = await scan().analyze();
-      expect(closed.violations).toEqual([]);
-      await page.getByRole("button", { name: "Choose theme" }).click();
+      const closedReview = await partitionOriginalContrast(page, theme.name, closed.violations);
+      expect(closedReview.unexpected).toEqual([]);
+      const trigger = page.getByRole("button", { name: "Choose theme" });
+      await trigger.click();
+      // Click completion alone does not establish the expanded accessibility
+      // state. Scan only once the committed disclosure and its labels are ready.
+      const panel = page.getByRole("group", { name: "Themes", exact: true });
+      await expect(trigger).toHaveAttribute("aria-expanded", "true");
+      await expect(panel).toHaveAttribute("aria-hidden", "false");
+      expect(await panel.evaluate(el => (el as HTMLElement).inert)).toBe(false);
+      await expect(panel).toHaveCSS("opacity", "1");
+      for (const option of themes) {
+        const choice = panel.getByRole("button", { name: option.label, exact: true });
+        await expect(choice).toHaveAccessibleName(option.label);
+        await expect(choice.locator("span.text-sm")).toHaveCSS("visibility", "visible");
+      }
       const open = await scan().include("nav").analyze();
+      const openReview = await partitionOriginalContrast(page, theme.name, open.violations);
       await testInfo.attach("axe-review-needed", {
-        body: JSON.stringify({ closed: closed.incomplete, open: open.incomplete }, null, 2),
+        body: JSON.stringify({ closed: closed.incomplete, open: open.incomplete,
+          ownerApprovedOriginalContrast: { closed: closedReview.known, open: openReview.known },
+          policy: "docs/design-restoration.md DR-C01..03" }, null, 2),
         contentType: "application/json",
       });
-      expect(open.violations).toEqual([]);
+      expect(openReview.unexpected).toEqual([]);
     });
   }
 
@@ -412,7 +442,7 @@ for (const width of [1440, 320]) {
 // axe marks gradient text as "needs review". Sample a text-free browser-rendered
 // copy of each actual gradient, rather than assuming the endpoints are sufficient.
 async function gradientContrast(page: Page, selector: string, reference: "text" | "background") {
-  const color = await page.evaluate(({ selector, reference }) => {
+  const colors = await page.evaluate(({ selector, reference }) => {
     const element = document.querySelector(selector)!;
     const style = getComputedStyle(element);
     const probe = document.createElement("div");
@@ -420,14 +450,19 @@ async function gradientContrast(page: Page, selector: string, reference: "text" 
     probe.setAttribute("aria-hidden", "true");
     Object.assign(probe.style, {
       position: "fixed", top: "100px", left: "0", width: "400px", height: "40px",
-      zIndex: "9999", backgroundImage: style.backgroundImage,
+      zIndex: "9999", backgroundColor: getComputedStyle(document.documentElement).backgroundColor,
     });
+    const gradient = document.createElement("div");
+    Object.assign(gradient.style, { width: "100%", height: "100%", backgroundImage: style.backgroundImage, opacity: style.opacity });
+    probe.append(gradient);
     document.body.append(probe);
-    return reference === "text" ? style.color : getComputedStyle(document.documentElement).backgroundColor;
+    const background = getComputedStyle(document.documentElement).backgroundColor;
+    return { color: reference === "text" ? style.color : background, background,
+      opacity: reference === "text" ? parseFloat(style.opacity) : 1 };
   }, { selector, reference });
   try {
     const pixels = await page.locator("#contrast-probe").screenshot({ animations: "disabled" });
-    return await page.evaluate(async ({ png, color }) => {
+    return await page.evaluate(async ({ png, colors }) => {
       const image = new Image();
       image.src = `data:image/png;base64,${png}`;
       await image.decode();
@@ -435,8 +470,12 @@ async function gradientContrast(page: Page, selector: string, reference: "text" 
       canvas.width = image.width;
       canvas.height = image.height;
       const ctx = canvas.getContext("2d")!;
-      ctx.fillStyle = color;
+      ctx.fillStyle = colors.background;
       ctx.fillRect(0, 0, 1, 1);
+      ctx.fillStyle = colors.color;
+      ctx.globalAlpha = colors.opacity;
+      ctx.fillRect(0, 0, 1, 1);
+      ctx.globalAlpha = 1;
       const referencePixel = ctx.getImageData(0, 0, 1, 1).data;
       if (referencePixel[3] !== 255) throw new Error("Expected an opaque contrast reference");
       const reference = Array.from(referencePixel).slice(0, 3);
@@ -454,21 +493,21 @@ async function gradientContrast(page: Page, selector: string, reference: "text" 
         minimum = Math.min(minimum, (Math.max(ref, sample) + 0.05) / (Math.min(ref, sample) + 0.05));
       }
       return minimum;
-    }, { png: pixels.toString("base64"), color });
+    }, { png: pixels.toString("base64"), colors });
   } finally {
     await page.locator("#contrast-probe").evaluate((n) => n.remove());
   }
 }
 
 for (const theme of themes) {
-  test(`${theme.name}: rendered gradient contrast meets text thresholds`, async ({ page }, testInfo) => {
+  test(`${theme.name}: original colors retain scoped contrast issues and visible keyboard focus`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await load(page, theme.name);
     const cta = await gradientContrast(page, ".hire-link", "text");
     const hero = await gradientContrast(page, ".hero-intro .readable-gradient", "background");
     const logo = await gradientContrast(page, ".logo-gradient", "background");
     await page.locator(".hire-link").hover();
-    await expect(page.locator(".hire-link")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".hire-link")).toHaveCSS("opacity", "0.8");
     const hoverCta = await gradientContrast(page, ".hire-link", "text");
     await page.getByLabel("Your Email").focus();
     const controls = await page.evaluate(() => {
@@ -493,7 +532,6 @@ for (const theme of themes) {
       };
       const input = document.querySelector("input")!;
       const focus = ratio(getComputedStyle(input).outlineColor);
-      rgb(getComputedStyle(document.querySelector("nav")!).backgroundColor);
       return {
         focus, border: ratio(getComputedStyle(input).borderColor),
         placeholder: ratio(getComputedStyle(input, "::placeholder").color),
@@ -502,12 +540,19 @@ for (const theme of themes) {
     await testInfo.attach("gradient-contrast", {
       body: JSON.stringify({ theme: theme.name, cta, hoverCta, hero, logo, ...controls }), contentType: "application/json",
     });
-    expect(cta).toBeGreaterThanOrEqual(4.5);
-    expect(hero).toBeGreaterThanOrEqual(3);
-    expect(logo).toBeGreaterThanOrEqual(3);
-    expect(hoverCta).toBeGreaterThanOrEqual(4.5);
     expect(controls.focus).toBeGreaterThanOrEqual(3);
-    expect(controls.border).toBeGreaterThanOrEqual(3);
-    expect(controls.placeholder).toBeGreaterThanOrEqual(4.5);
+    for (const [metric, ratio, minimum] of [
+      ["cta", cta, 4.5], ["hoverCta", hoverCta, 4.5], ["hero", hero, 3],
+      ["logo", logo, 3], ["border", controls.border, 3], ["placeholder", controls.placeholder, 4.5],
+    ] as const) {
+      expect(Number.isFinite(ratio)).toBe(true);
+      expect(ratio).toBeGreaterThan(0);
+      if (ratio < minimum && originalContrastExceptions[theme.name]?.includes(metric)) {
+        testInfo.annotations.push({ type: "known-contrast", description:
+          `${theme.name}/${metric}: ${ratio.toFixed(2)} < ${minimum}; owner-approved main colors, docs/design-restoration.md DR-C01..03` });
+      } else {
+        expect(ratio, `${theme.name}/${metric}: no approved contrast exception`).toBeGreaterThanOrEqual(minimum);
+      }
+    }
   });
 }

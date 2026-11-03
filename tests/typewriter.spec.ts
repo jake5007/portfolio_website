@@ -9,8 +9,10 @@ function trackAnimationTimers() {
   const pending = new Set<ReturnType<typeof setTimeout>>();
   let owned = false;
   let callbacks = 0;
+  const delays: number[] = [];
   globalThis.setTimeout = ((callback: (...args: unknown[]) => void, delay?: number, ...args: unknown[]) => {
     if (!owned) return nativeSet(callback, delay, ...args);
+    delays.push(delay ?? 0);
     const timer = nativeSet(() => {
       pending.delete(timer);
       callbacks++;
@@ -27,6 +29,7 @@ function trackAnimationTimers() {
   }) as typeof clearTimeout;
   return {
     pending,
+    delays,
     get callbacks() { return callbacks; },
     wait: (ms: number) => new Promise<void>(resolve => nativeSet(resolve, ms)),
     start(onText: (text: string) => void) {
@@ -40,6 +43,31 @@ function trackAnimationTimers() {
     },
   };
 }
+
+test("typing and deletion sample the original random delay while word pauses stay fixed", async () => {
+  const timers = trackAnimationTimers();
+  const nativeRandom = Math.random;
+  let stop: (() => void) | undefined;
+  try {
+    const texts: string[] = [];
+    Math.random = () => 0;
+    stop = timers.start(text => texts.push(text));
+    expect(timers.delays[0]).toBe(25);
+    Math.random = () => 0.999;
+    await expect.poll(() => texts.includes("현진"), { timeout: 2000 }).toBe(true);
+    expect(timers.delays[1]).toBeCloseTo(74.95);
+    expect(timers.delays[2]).toBe(1500);
+    Math.random = () => 0.5;
+    await expect.poll(() => texts.includes(""), { timeout: 2500 }).toBe(true);
+    expect(timers.delays.slice(3, 5)).toEqual([50, 50]);
+    stop();
+    expect(timers.pending.size).toBe(0);
+  } finally {
+    stop?.();
+    Math.random = nativeRandom;
+    timers.restore();
+  }
+});
 
 for (const phase of ["before first tick", "during word pause"] as const) {
   test(`typewriter cancels its actual timer ${phase}, including repeated starts`, async () => {

@@ -9,7 +9,7 @@ const AboutMeTabs = () => {
 
   return (
     <>
-      <div role="group" aria-label="About categories" className="flex flex-wrap gap-4 justify-center sm:justify-start mt-7">
+      <div role="group" aria-label="About categories" className="flex w-max max-w-[calc(100vw-1rem)] flex-wrap self-center sm:self-start gap-4 justify-center sm:justify-start mt-7">
         {aboutTabs.map((tab) => (
           <TabBtn
             key={tab.id}
