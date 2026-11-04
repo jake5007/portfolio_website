@@ -228,6 +228,7 @@ test.describe("touch navigation", () => {
     const figure = page.locator("#work figure").first();
     const action = figure.getByRole("link").first();
     await figure.scrollIntoViewIfNeeded();
+    await expect.poll(() => figure.locator("img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
     await expect(action.locator("..")).toHaveCSS("opacity", "0");
     await figure.tap({ position: { x: 5, y: 5 } });
     await expect(action.locator("..")).toHaveCSS("opacity", "1");
@@ -237,6 +238,9 @@ test.describe("touch navigation", () => {
     const popupPromise = page.waitForEvent("popup");
     await action.tap();
     const popup = await popupPromise;
+    await popup.waitForLoadState("domcontentloaded");
+    expect(popup.url()).toBe(await action.getAttribute("href"));
+    expect(await popup.evaluate(() => window.opener)).toBeNull();
     await popup.close();
     await page.getByRole("button", { name: "Open navigation" }).tap();
     await expect(page.locator("#mobile-navigation")).toBeVisible();
