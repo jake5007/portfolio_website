@@ -73,6 +73,32 @@ test.describe("project card touch gestures", () => {
       }
     });
   }
+
+  test("touch activation does not pin the old overlay after returning and hovering another card", async ({ page }) => {
+    const figure = await loadCards(page);
+    const second = page.locator("#work figure").nth(1);
+    const link = figure.getByRole("link").first();
+    await figure.tap({ position: { x: 5, y: 5 } });
+    await expect(figure.locator(".project-actions")).toHaveCSS("opacity", "1");
+    const pending = page.waitForEvent("popup");
+    await link.tap();
+    const popup = await pending;
+    try {
+      await popup.waitForLoadState("domcontentloaded");
+      expect(popup.url()).toBe(await link.getAttribute("href"));
+      expect(await popup.evaluate(() => window.opener)).toBeNull();
+      await popup.bringToFront();
+      await page.bringToFront();
+      await second.hover();
+      await expect(second.locator(".project-actions")).toHaveCSS("opacity", "1");
+      await expect(figure.locator(".project-actions")).toHaveCSS("opacity", "0");
+      // A fresh first tap must still reopen the card after native navigation.
+      await figure.tap({ position: { x: 5, y: 5 } });
+      await expect(figure.locator(".project-actions")).toHaveCSS("opacity", "1");
+    } finally {
+      await popup.close();
+    }
+  });
 });
 
 test("mouse hover remains transient and native keyboard focus reveals and activates project links", async ({ page }) => {
@@ -85,7 +111,9 @@ test("mouse hover remains transient and native keyboard focus reveals and activa
   await page.mouse.move(0, 0);
   await expect(overlay).toHaveCSS("opacity", "0");
   const links = figure.getByRole("link");
-  await links.first().focus();
+  await page.getByRole("button", { name: "Test", exact: true }).focus();
+  await page.keyboard.press("Tab");
+  await expect(links.first()).toBeFocused();
   await expect(overlay).toHaveCSS("opacity", "1");
   await page.keyboard.press("Tab");
   await expect(links.nth(1)).toBeFocused();
@@ -99,4 +127,73 @@ test("mouse hover remains transient and native keyboard focus reveals and activa
   await popup.close();
   await page.getByRole("button", { name: "Test", exact: true }).focus();
   await expect(overlay).toHaveCSS("opacity", "0");
+});
+
+for (const actionIndex of [0, 1]) {
+  test(`mouse action ${actionIndex + 1} return keeps native focus without pinning an overlay`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const first = await loadCards(page);
+    const second = page.locator("#work figure").nth(1);
+    const link = first.getByRole("link").nth(actionIndex);
+    await first.hover();
+    await expect(first.locator(".project-actions")).toHaveCSS("opacity", "1");
+    const pending = page.waitForEvent("popup");
+    await link.click();
+    const popup = await pending;
+    try {
+      await popup.waitForLoadState("domcontentloaded");
+      expect(popup.url()).toBe(await link.getAttribute("href"));
+      expect(await popup.evaluate(() => window.opener)).toBeNull();
+      await popup.bringToFront();
+      await page.bringToFront();
+      await second.hover();
+      await expect(second.locator(".project-actions")).toHaveCSS("opacity", "1");
+      await expect(first.locator(".project-actions")).toHaveCSS("opacity", "0");
+      await expect(link).toBeFocused();
+      expect(await link.evaluate(el => el.matches(":focus-visible"))).toBe(false);
+      expect(await page.locator("#work .project-actions").evaluateAll(elements =>
+        elements.filter(el => parseFloat(getComputedStyle(el).opacity) > 0).length)).toBe(1);
+      await page.mouse.move(0, 0);
+      await expect(second.locator(".project-actions")).toHaveCSS("opacity", "0");
+      // Preserve the browser's Tab position rather than blurring the old link.
+      await page.keyboard.press("Tab");
+      const next = page.locator("#work figure a").nth(actionIndex + 1);
+      await expect(next).toBeFocused();
+      await expect(next.locator("..")).toHaveCSS("opacity", "1");
+      expect(await next.evaluate(el => el.matches(":focus-visible"))).toBe(true);
+    } finally {
+      await popup.close();
+    }
+  });
+}
+
+test("keyboard activation preserves visible actions and Tab order after returning from an external tab", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const figure = await loadCards(page);
+  const links = figure.getByRole("link");
+  await page.getByRole("button", { name: "Test", exact: true }).focus();
+  await page.keyboard.press("Tab");
+  await expect(links.first()).toBeFocused();
+  const pending = page.waitForEvent("popup");
+  await page.keyboard.press("Enter");
+  const popup = await pending;
+  try {
+    await popup.waitForLoadState("domcontentloaded");
+    expect(popup.url()).toBe(await links.first().getAttribute("href"));
+    expect(await popup.evaluate(() => window.opener)).toBeNull();
+    await popup.bringToFront();
+    await page.bringToFront();
+    await expect(links.first()).toBeFocused();
+    expect(await links.first().evaluate(el => el.matches(":focus-visible"))).toBe(true);
+    await expect(figure.locator(".project-actions")).toHaveCSS("opacity", "1");
+    await page.keyboard.press("Tab");
+    await expect(links.nth(1)).toBeFocused();
+    await expect(figure.locator(".project-actions")).toHaveCSS("opacity", "1");
+    await page.keyboard.press("Shift+Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expect(page.getByRole("button", { name: "Test", exact: true })).toBeFocused();
+    await expect(figure.locator(".project-actions")).toHaveCSS("opacity", "0");
+  } finally {
+    await popup.close();
+  }
 });

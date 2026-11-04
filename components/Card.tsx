@@ -45,6 +45,10 @@ const Card = ({ title, desc, imgSrc, liveURL, gitURL }: CardProps) => {
             event.preventDefault();
             event.stopPropagation();
             setTouchOpen(true);
+          } else if (event.target instanceof Element && event.target.closest("a")) {
+            // Navigation ends the explicit touch reveal. Keep native focus:
+            // keyboard focus-visible, unlike pointer focus, still shows actions.
+            setTouchOpen(false);
           }
         }}>
         <Image

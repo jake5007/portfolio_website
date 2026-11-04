@@ -22,7 +22,7 @@
 .skip-link:focus { transform: translateY(0); }
 
 .project-actions { opacity: 0; pointer-events: none; }
-figure:hover .project-actions, figure:focus-within .project-actions,
+figure:hover .project-actions, .project-actions:has(> a:focus-visible),
 figure[data-touch-open="true"] .project-actions {
   opacity: 1;
   pointer-events: auto;
