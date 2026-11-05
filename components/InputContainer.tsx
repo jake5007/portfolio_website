@@ -6,6 +6,7 @@ const InputContainer = ({
   type = "text",
   placeholder,
   textarea = false,
+  maxLength,
 }: InputContainerProps) => {
   return (
     <div className="mb-4 w-full md:max-w-[650px]">
@@ -18,6 +19,8 @@ const InputContainer = ({
           id={name}
           placeholder={placeholder}
           rows={4}
+          required
+          maxLength={maxLength}
           className="textarea textarea-bordered textarea-primary border-2 rounded-xl 
           w-full text-base-content bg-base-100 focus:outline-none text-lg resize-none"
         />
@@ -26,7 +29,9 @@ const InputContainer = ({
           name={name}
           id={name}
           type={type}
+          autoComplete={type === "email" ? "email" : undefined}
           required
+          maxLength={maxLength}
           placeholder={placeholder}
           className="input input-bordered input-primary border-2 rounded-xl 
           w-full text-base-content bg-base-100 focus:outline-none text-lg"

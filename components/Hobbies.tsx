@@ -10,10 +10,10 @@ const Hobbies = () => {
   const isInView = useInView(ref, { once: true });
 
   return (
-    <section id="hobbies" className="sm:mt-10">
-      <h1 className="text-primary text-center text-2xl md:text-3xl font-bold">
+    <section id="hobbies" tabIndex={-1} className="sm:mt-10">
+      <h2 className="text-primary text-center text-2xl md:text-3xl font-bold">
         My Hobbies
-      </h1>
+      </h2>
 
       <div
         ref={ref}
