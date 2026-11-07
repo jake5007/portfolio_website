@@ -95,19 +95,19 @@ const Contact = () => {
           name="email"
           type="email"
           maxLength={CONTACT_LIMITS.email}
-          placeholder="abcd@gmail.com"
+          placeholder="you@example.com"
         />
         <InputContainer
           label="Subject"
           name="subject"
           type="text"
           maxLength={CONTACT_LIMITS.subject}
-          placeholder="I want to have a coffee chat..."
+          placeholder="Let's discuss an opportunity"
         />
         <InputContainer
           label="Message"
           name="message"
-          placeholder="Hello, I'm..."
+          placeholder="Hi Jin, I'd like to connect about..."
           textarea
           maxLength={CONTACT_LIMITS.message}
         />
