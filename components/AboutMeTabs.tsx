@@ -6,6 +6,7 @@ import TabBtn from "./TabBtn";
 
 const AboutMeTabs = () => {
   const [currTab, setCurrTab] = useState("skills");
+  const current = aboutTabs.find((tab) => tab.id === currTab);
 
   return (
     <>
@@ -21,27 +22,27 @@ const AboutMeTabs = () => {
         ))}
       </div>
       <div className="mt-5">
-        <ul className="list-disc pl-4">
-          {aboutTabs
-            .find((tab) => currTab === tab.id)
-            ?.content.map((item, idx) => (
-              <li key={idx}>
-                {currTab === "experience" ? (
-                  <>
-                    <span className="font-bold">{item.label}</span> at{" "}
-                    {item.value}
-                  </>
-                ) : (
-                  <>
-                    <span className="font-bold">{item.label}</span>:{" "}
-                    {item.value}
-                  </>
+        <ul className="space-y-4">
+          {current?.content.map((item) => (
+            <li key={item.label} className="min-w-0">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <span className="font-semibold">{item.label}</span>
+                {item.period && (
+                  <span className="text-xs text-base-content/70">{item.period}</span>
                 )}
-              </li>
-            ))}
+              </div>
+              <p className="mt-1 text-sm sm:text-base break-words">{item.value}</p>
+              {item.detail && (
+                <p className="mt-1 text-sm text-base-content/80 break-words">
+                  {item.detail}
+                </p>
+              )}
+            </li>
+          ))}
         </ul>
       </div>
     </>
   );
 };
+
 export default AboutMeTabs;
