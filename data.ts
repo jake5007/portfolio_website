@@ -241,7 +241,7 @@ export const hobbies = [
   {
     id: 1,
     title: "language exchange",
-    desc: "Almost every Friday, I participate in a language exchange event. It's really enjoyable to connect with people from different countries, making new friends and sharing cultural experiences.",
+    desc: "I often join language exchange meetups on Fridays. I enjoy meeting people from different countries, making friends, and learning about their cultures.",
     image: [
       "/images/hobbies/language_exchange/01.jpg",
       "/images/hobbies/language_exchange/02.jpg",
@@ -258,7 +258,7 @@ export const hobbies = [
   {
     id: 2,
     title: "travel & pictures",
-    desc: "I love capturing moments through photography whenever I travel. So far, I've had the opportunity to explore Japan, Italy, Singapore, and Germany. One of my dreams is to visit every European country and capture the beauty of their landscapes in photographs someday.",
+    desc: "I love taking photos when I travel. I've explored Japan, Italy, Singapore, and Germany, and I hope to visit every country in Europe someday, capturing its landscapes along the way.",
     image: [
       "/images/hobbies/travel/01.jpg",
       "/images/hobbies/travel/02.jpg",
