@@ -86,7 +86,7 @@ export const aboutTabs: AboutTab[] = [
       {
         label: "Software Developer",
         value: "WITH Information",
-        period: "Mar 2024 – Jan 2025",
+        period: "Mar 2024 – Mar 2025",
         detail: "Developed and maintained web applications using Vue.js, JavaScript, C, and Oracle Database.",
       },
       {
