@@ -258,7 +258,7 @@ export const hobbies = [
   {
     id: 2,
     title: "travel & pictures",
-    desc: "I love taking photos when I travel. I've explored Japan, Italy, Singapore, and Germany, and I hope to visit every country in Europe someday, capturing its landscapes along the way.",
+    desc: "I love taking photos when I travel. I've explored Japan, Italy, Singapore, Germany, Poland, and Hungary, and I hope to visit every country in Europe someday, capturing its landscapes along the way.",
     image: [
       "/images/hobbies/travel/01.jpg",
       "/images/hobbies/travel/02.jpg",
