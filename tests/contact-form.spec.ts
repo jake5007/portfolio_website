@@ -136,6 +136,12 @@ test("sending preserves theme button colors while reducing opacity", async ({ pa
   for (const theme of ["pastel", "night", "autumn", "forest", "coffee", "luxury", "valentine"]) {
     await page.evaluate((name) => document.documentElement.setAttribute("data-theme", name), theme);
     const button = page.getByRole("button", { name: "Send", exact: true });
+
+    // The previous click leaves the pointer hovering over this same button.
+    // DaisyUI darkens btn-primary on hover, so compare against the neutral
+    // enabled appearance instead of accidentally recording hover colors.
+    await page.mouse.move(0, 0);
+    await expect.poll(() => button.evaluate((node) => node.matches(":hover"))).toBe(false);
     const before = await button.evaluate((node) => {
       const style = getComputedStyle(node);
       return { background: style.backgroundColor, color: style.color, border: style.borderTopColor };
