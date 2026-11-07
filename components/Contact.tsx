@@ -116,6 +116,8 @@ const Contact = () => {
           disabled={loading}
           className="btn btn-primary w-full md:max-w-[650px] rounded-lg 
             hover:opacity-80 transition-opacity duration-200
+            disabled:!bg-primary disabled:!text-primary-content
+            disabled:!border-primary disabled:!opacity-75
             tracking-wider font-semibold text-lg text-center"
         >
           {loading ? "Sending..." : "Send"}
