@@ -26,6 +26,8 @@ type AboutTab = {
 type AboutContentItem = {
   label: string;
   value: string;
+  detail?: string;
+  period?: string;
 };
 
 export const aboutTabs: AboutTab[] = [
@@ -34,20 +36,20 @@ export const aboutTabs: AboutTab[] = [
     title: "Skills",
     content: [
       {
-        label: "Frontend",
-        value: "JavaScript (TypeScript), React, Tailwind CSS, Vue.js",
+        label: "Test Automation",
+        value: "Playwright · TypeScript · Python · E2E Testing · Page Object Model · GitHub Actions",
       },
       {
-        label: "Backend",
-        value: "Node.js (Express)",
+        label: "Software Testing",
+        value: "Functional Testing · Regression Testing · Test Case Design · Defect Reporting",
       },
       {
-        label: "Database",
-        value: "PostgreSQL, Oracle, MongoDB",
+        label: "Data Analysis & SQL",
+        value: "SQL · Amazon Athena · Oracle Database · Data Validation",
       },
       {
-        label: "Testing",
-        value: "Playwright (E2E Test Automation)",
+        label: "Software Development",
+        value: "JavaScript · React · Vue.js · Node.js · Git",
       },
     ],
   },
@@ -57,16 +59,17 @@ export const aboutTabs: AboutTab[] = [
     content: [
       {
         label: "University",
-        value: "Handong Global University (Pohang, South Korea)",
+        value: "Handong Global University",
+        detail: "B.S. in Computer Engineering · B.A. in Management · Pohang, South Korea",
       },
       {
-        label: "Training",
-        value:
-          "Java&Spring Backend Developer Training Course (Busan, South Korea)",
+        label: "Certifications",
+        value: "ISTQB Certified Tester Foundation Level (CTFL) · SQL Developer (SQLD) · Engineer Information Processing",
       },
       {
-        label: "Course",
-        value: "MERN Stack Course (Udemy)",
+        label: "Professional Training",
+        value: "Java & Spring Backend Development",
+        detail: "Backend Developer Training Program · Busan, South Korea",
       },
     ],
   },
@@ -75,16 +78,22 @@ export const aboutTabs: AboutTab[] = [
     title: "Experience",
     content: [
       {
+        label: "QA Engineer",
+        value: "QOOD",
+        period: "Jun 2026 – Present",
+        detail: "Perform navigation software testing and SQL-based route analysis. Built Python and Playwright automation tools, reducing a repetitive reporting workflow from approximately 60 minutes to 2 minutes.",
+      },
+      {
         label: "Software Developer",
-        value: "WITH Info",
+        value: "WITH Information",
+        period: "Mar 2024 – Jan 2025",
+        detail: "Developed and maintained web applications using Vue.js, JavaScript, C, and Oracle Database.",
       },
       {
         label: "Frontend Developer",
-        value: "SAINTI",
-      },
-      {
-        label: "Credit Analyst",
-        value: "Goryo Savings Bank",
+        value: "SAINTI Inc. (formerly SCADAICT)",
+        period: "Sep 2022 – Mar 2023",
+        detail: "Developed web-based manufacturing dashboards using Vue.js and Apache ECharts.",
       },
     ],
   },
@@ -92,17 +101,16 @@ export const aboutTabs: AboutTab[] = [
     id: "languages",
     title: "Languages",
     content: [
-      {
-        label: "Korean",
-        value: "Native",
-      },
+      { label: "Korean", value: "Native" },
       {
         label: "English",
-        value: "C1 (Advanced), IELTS GT: Overall 7.0",
+        value: "IELTS GT 7.0",
+        detail: "Professional working proficiency",
       },
       {
-        label: "German",
-        value: "A1 (Beginner)",
+        label: "Polish",
+        value: "Beginner",
+        detail: "Currently learning",
       },
     ],
   },
