@@ -132,6 +132,41 @@ test("duplicate submissions are blocked even before React rerenders", async ({ p
   expect(calls).toBe(1);
 });
 
+test("sending preserves theme button colors while reducing opacity", async ({ page }) => {
+  for (const theme of ["pastel", "night", "autumn", "forest", "coffee", "luxury", "valentine"]) {
+    await page.evaluate((name) => document.documentElement.setAttribute("data-theme", name), theme);
+    const button = page.getByRole("button", { name: "Send", exact: true });
+    const before = await button.evaluate((node) => {
+      const style = getComputedStyle(node);
+      return { background: style.backgroundColor, color: style.color, border: style.borderTopColor };
+    });
+
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    await page.route("**/api/send", async (route) => {
+      await gate;
+      await route.fulfill({ status: 200, contentType: "application/json",
+        body: JSON.stringify({ success: true, message: "Email sent successfully" }) });
+    });
+    try {
+      await fillForm(page);
+      await button.click();
+      const sending = page.getByRole("button", { name: "Sending...", exact: true });
+      await expect(sending).toBeDisabled();
+      await expect(sending).toHaveCSS("opacity", "0.75");
+      const during = await sending.evaluate((node) => {
+        const style = getComputedStyle(node);
+        return { background: style.backgroundColor, color: style.color, border: style.borderTopColor };
+      });
+      expect(during, `Theme ${theme}`).toEqual(before);
+    } finally {
+      release();
+    }
+    await expect(page.getByRole("button", { name: "Send", exact: true })).toBeEnabled();
+    await page.unroute("**/api/send");
+  }
+});
+
 test("a stalled request times out, preserves input, and restores the button", async ({ page }) => {
   await page.clock.install();
   let pending: Route | undefined;
