@@ -26,6 +26,8 @@ type AboutTab = {
 type AboutContentItem = {
   label: string;
   value: string;
+  detail?: string;
+  period?: string;
 };
 
 export const aboutTabs: AboutTab[] = [
@@ -34,20 +36,20 @@ export const aboutTabs: AboutTab[] = [
     title: "Skills",
     content: [
       {
-        label: "Frontend",
-        value: "JavaScript (TypeScript), React, Tailwind CSS, Vue.js",
+        label: "Test Automation",
+        value: "Playwright · TypeScript · Python · E2E Testing · Page Object Model · GitHub Actions",
       },
       {
-        label: "Backend",
-        value: "Node.js (Express)",
+        label: "Software Testing",
+        value: "Functional Testing · Regression Testing · Test Case Design · Defect Reporting",
       },
       {
-        label: "Database",
-        value: "PostgreSQL, Oracle, MongoDB",
+        label: "Data Analysis & SQL",
+        value: "SQL · Amazon Athena · Oracle Database · Data Validation",
       },
       {
-        label: "Testing",
-        value: "Playwright (E2E Test Automation)",
+        label: "Software Development",
+        value: "JavaScript · React · Vue.js · Node.js · Git",
       },
     ],
   },
@@ -57,16 +59,17 @@ export const aboutTabs: AboutTab[] = [
     content: [
       {
         label: "University",
-        value: "Handong Global University (Pohang, South Korea)",
+        value: "Handong Global University",
+        detail: "B.S. in Computer Engineering · B.A. in Management · Pohang, South Korea",
       },
       {
-        label: "Training",
-        value:
-          "Java&Spring Backend Developer Training Course (Busan, South Korea)",
+        label: "Certifications",
+        value: "ISTQB Certified Tester Foundation Level (CTFL) · SQL Developer (SQLD) · Engineer Information Processing",
       },
       {
-        label: "Course",
-        value: "MERN Stack Course (Udemy)",
+        label: "Professional Training",
+        value: "Java & Spring Backend Development",
+        detail: "Backend Developer Training Program · Busan, South Korea",
       },
     ],
   },
@@ -75,16 +78,22 @@ export const aboutTabs: AboutTab[] = [
     title: "Experience",
     content: [
       {
+        label: "QA Engineer",
+        value: "QOOD",
+        period: "Jun 2026 – Present",
+        detail: "Perform navigation software testing and SQL-based route analysis. Built Python and Playwright automation tools, reducing a repetitive reporting workflow from approximately 60 minutes to 2 minutes.",
+      },
+      {
         label: "Software Developer",
-        value: "WITH Info",
+        value: "WITH Information",
+        period: "Mar 2024 – Mar 2025",
+        detail: "Developed and maintained web applications using Vue.js, JavaScript, C, and Oracle Database.",
       },
       {
         label: "Frontend Developer",
-        value: "SAINTI",
-      },
-      {
-        label: "Credit Analyst",
-        value: "Goryo Savings Bank",
+        value: "SAINTI Inc. (formerly SCADAICT)",
+        period: "Sep 2022 – Mar 2023",
+        detail: "Developed web-based manufacturing dashboards using Vue.js and Apache ECharts.",
       },
     ],
   },
@@ -92,17 +101,16 @@ export const aboutTabs: AboutTab[] = [
     id: "languages",
     title: "Languages",
     content: [
-      {
-        label: "Korean",
-        value: "Native",
-      },
+      { label: "Korean", value: "Native" },
       {
         label: "English",
-        value: "C1 (Advanced), IELTS GT: Overall 7.0",
+        value: "IELTS GT 7.0",
+        detail: "Professional working proficiency",
       },
       {
-        label: "German",
-        value: "A1 (Beginner)",
+        label: "Polish",
+        value: "Beginner",
+        detail: "Currently learning",
       },
     ],
   },
@@ -128,7 +136,7 @@ export const workList = [
     id: 11,
     category: ["all", "test"],
     title: "Sauce Demo Playwright E2E Test",
-    desc: "Playwright-based E2E testing project with scalable structure and real-world user flow validation",
+    desc: "Automated end-to-end tests for SauceDemo using Playwright, TypeScript, and the Page Object Model, with Allure test reports.",
     imgSrc: "/images/work/saucedemo_playwright.png",
     gitURL: "https://github.com/jake5007/saucedemo-playwright-portfolio",
     liveURL: "https://jake5007.github.io/saucedemo-playwright-portfolio/",
@@ -137,7 +145,7 @@ export const workList = [
     id: 10,
     category: ["all", "dev"],
     title: "Dessert List with Cart",
-    desc: "Take a look at mouthwatering desserts and add them to your cart",
+    desc: "Browse a selection of desserts and add your favorites to a shopping cart.",
     imgSrc: "/images/work/product_list_with_cart.png",
     gitURL: "https://github.com/jake5007/product-list-with-cart",
     liveURL: "https://product-list-with-cart-peach-mu.vercel.app/",
@@ -146,7 +154,7 @@ export const workList = [
     id: 9,
     category: ["all", "dev"],
     title: "Icebreaker API",
-    desc: "Simple public API to retrieve categorized or random ice-breaking questions",
+    desc: "A public API that serves icebreaker questions by category or at random.",
     imgSrc: "/images/work/icebreaker_api.png",
     gitURL: "https://github.com/jake5007/icebreaker-api",
     liveURL: "https://icebreaker-api-us13.onrender.com/docs/",
@@ -155,7 +163,7 @@ export const workList = [
     id: 8,
     category: ["all", "dev"],
     title: "Online Shop",
-    desc: "Online shop for buying products",
+    desc: "An e-commerce application for browsing and purchasing products.",
     imgSrc: "/images/work/online_shop.png",
     gitURL: "https://github.com/jake5007/online-shop-pern",
     liveURL: "https://online-shop-pern.onrender.com/",
@@ -164,7 +172,7 @@ export const workList = [
     id: 7,
     category: ["all", "dev"],
     title: "Memory Board",
-    desc: "Upload and share your valuable memories",
+    desc: "A web application for uploading and sharing memorable moments.",
     imgSrc: "/images/work/memory_board.png",
     gitURL: "https://github.com/jake5007/pj_memory_board",
     liveURL: "https://memory-board.onrender.com",
@@ -173,7 +181,7 @@ export const workList = [
     id: 6,
     category: ["all", "dev"],
     title: "Meme Generator",
-    desc: "Make memes using randomly fetched pictures",
+    desc: "Create memes using randomly fetched images.",
     imgSrc: "/images/work/meme_maker.png",
     gitURL: "https://github.com/jake5007/meme_maker",
     liveURL: "https://meme-maker-git-main-jake5007.vercel.app/",
@@ -182,7 +190,7 @@ export const workList = [
     id: 5,
     category: ["all", "dev"],
     title: "Space Tourism Website",
-    desc: "Visit space tourism website",
+    desc: "Explore an interactive website themed around space tourism.",
     imgSrc: "/images/work/space_tourism.png",
     gitURL: "https://github.com/jake5007/space-tourism-website",
     liveURL: "https://space-tourism-website-jake5007.vercel.app/",
@@ -191,7 +199,7 @@ export const workList = [
     id: 4,
     category: ["all", "dev"],
     title: "Rock Paper Scissors Lizard Spock",
-    desc: "Play Rock Paper Scissors Lizard Spock with computer",
+    desc: "Play Rock, Paper, Scissors, Lizard, Spock against the computer.",
     imgSrc: "/images/work/rpsls.png",
     gitURL: "https://github.com/jake5007/rock-paper-scissors-lizard-spock",
     liveURL: "https://creative-dragon-ccbb55.netlify.app/",
@@ -199,8 +207,8 @@ export const workList = [
   {
     id: 3,
     category: ["all", "dev"],
-    title: "IP Adress Tracker",
-    desc: "You can get the IP address locations by searching IP address",
+    title: "IP Address Tracker",
+    desc: "Look up an IP address to view its approximate geographic location.",
     imgSrc: "/images/work/ip_address_tracker.png",
     gitURL: "https://github.com/jake5007/ip-address-tracker",
     liveURL: "https://ip-address-tracker-jake5007.vercel.app/",
@@ -210,7 +218,7 @@ export const workList = [
     id: 2,
     category: ["all", "dev"],
     title: "Age Calculator",
-    desc: "Write your dob and calculate your age",
+    desc: "Enter your date of birth to calculate your age.",
     imgSrc: "/images/work/age_calculator.png",
     gitURL:
       "https://frontend-mentor-junior-age-calculator-jake5007.vercel.app/",
@@ -222,7 +230,7 @@ export const workList = [
     id: 1,
     category: ["all", "dev"],
     title: "Advice Generator",
-    desc: "You can get some advice randomly",
+    desc: "Generate a random piece of advice with a single click.",
     imgSrc: "/images/work/advice_generator.png",
     gitURL: "https://github.com/jake5007/advice-generator",
     liveURL: "https://advice-generator-jake5007.vercel.app/",
@@ -233,7 +241,7 @@ export const hobbies = [
   {
     id: 1,
     title: "language exchange",
-    desc: "Almost every Friday, I participate in a language exchange event. It's really enjoyable to connect with people from different countries, making new friends and sharing cultural experiences.",
+    desc: "I often join language exchange meetups on Fridays. I enjoy meeting people from different countries, making friends, and learning about their cultures.",
     image: [
       "/images/hobbies/language_exchange/01.jpg",
       "/images/hobbies/language_exchange/02.jpg",
@@ -250,7 +258,7 @@ export const hobbies = [
   {
     id: 2,
     title: "travel & pictures",
-    desc: "I love capturing moments through photography whenever I travel. So far, I've had the opportunity to explore Japan, Italy, Singapore, and Germany. One of my dreams is to visit every European country and capture the beauty of their landscapes in photographs someday.",
+    desc: "I love taking photos when I travel. I've explored Japan, Italy, Singapore, Germany, Poland, and Hungary, and I hope to visit every country in Europe someday, capturing its landscapes along the way.",
     image: [
       "/images/hobbies/travel/01.jpg",
       "/images/hobbies/travel/02.jpg",

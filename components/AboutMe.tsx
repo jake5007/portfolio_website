@@ -18,20 +18,24 @@ const AboutMe = () => {
           </h2>
           <p className="mt-3 text-left">
             I'm a QA Engineer with a background in software development and a
-            passion for improving software quality.
+            strong interest in test automation.
             <br />
-            <br /> Before transitioning into QA, I gained hands-on experience in
-            web development, working with JavaScript, Vue.js, and Oracle
-            Database.
             <br />
-            <br /> Currently, I focus on software testing, navigation data
-            analysis, and process automation. I also develop automation tools
-            using Python and Playwright to streamline repetitive tasks and
-            improve testing efficiency.
+            My experience spans web development, navigation software testing,
+            and SQL-based data analysis. Having worked as both a developer and a
+            tester, I bring a practical understanding of how software is built
+            and how to improve its quality.
             <br />
-            <br /> I'm continuously expanding my skills in test automation and
-            software quality engineering, with the goal of contributing to
-            international teams and building reliable, high-quality software.
+            <br />
+            I develop automation tools using Python and Playwright to streamline
+            repetitive workflows and improve testing efficiency. I also build
+            end-to-end test automation projects using TypeScript, Playwright,
+            and GitHub Actions.
+            <br />
+            <br />
+            I'm working toward becoming a QA Automation Engineer and hope to
+            contribute to international teams that value quality,
+            collaboration, and continuous improvement.
           </p>
           <AboutMeTabs />
         </div>
