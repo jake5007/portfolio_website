@@ -25,7 +25,7 @@ const AboutMeTabs = () => {
         <ul className="space-y-4">
           {current?.content.map((item) => (
             <li key={item.label} className="min-w-0">
-              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+              <div className="flex flex-col items-start gap-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-x-3">
                 <span className="font-semibold">{item.label}</span>
                 {item.period && (
                   <span className="text-xs text-base-content/70">{item.period}</span>
