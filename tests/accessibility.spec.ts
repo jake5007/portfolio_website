@@ -95,16 +95,21 @@ test("Experience dates sit below each role on mobile and beside roles on desktop
   await expect(entries).toHaveCount(3);
   for (const width of [320, 390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
+    // Assert the responsive CSS has settled after the viewport change.
+    // Read both rectangles atomically: separate boundingBox calls can
+    // observe different frames while fonts/layout are settling.
     for (const entry of await entries.all()) {
-      const role = await entry.locator("span.font-semibold").boundingBox();
-      const date = await entry.locator("span.text-xs").boundingBox();
-      expect(role).not.toBeNull();
-      expect(date).not.toBeNull();
-      if (width < 640) {
-        expect(date!.y, `Date should be below role at ${width}px`).toBeGreaterThanOrEqual(role!.y + role!.height - 1);
-      } else {
-        expect(Math.abs(date!.y - role!.y), `Date should share row at ${width}px`).toBeLessThan(15);
-      }
+      const header = entry.locator("div.flex").first();
+      await expect(header).toHaveCSS("flex-direction", width < 640 ? "column" : "row");
+      await expect.poll(async () => entry.evaluate((li) => {
+        const spans = li.querySelectorAll("div.flex > span");
+        if (spans.length !== 2) return false;
+        const role = spans[0].getBoundingClientRect();
+        const date = spans[1].getBoundingClientRect();
+        return width < 640
+          ? date.top >= role.bottom - 1
+          : Math.abs(date.top - role.top) < 15;
+      }), { message: `Experience date alignment at ${width}px` }).toBe(true);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
