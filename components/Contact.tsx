@@ -95,19 +95,19 @@ const Contact = () => {
           name="email"
           type="email"
           maxLength={CONTACT_LIMITS.email}
-          placeholder="abcd@gmail.com"
+          placeholder="you@example.com"
         />
         <InputContainer
           label="Subject"
           name="subject"
           type="text"
           maxLength={CONTACT_LIMITS.subject}
-          placeholder="I want to have a coffee chat..."
+          placeholder="Let's discuss an opportunity"
         />
         <InputContainer
           label="Message"
           name="message"
-          placeholder="Hello, I'm..."
+          placeholder="Hi Jin, I'd like to connect about..."
           textarea
           maxLength={CONTACT_LIMITS.message}
         />
@@ -116,6 +116,8 @@ const Contact = () => {
           disabled={loading}
           className="btn btn-primary w-full md:max-w-[650px] rounded-lg 
             hover:opacity-80 transition-opacity duration-200
+            disabled:!bg-primary disabled:!text-primary-content
+            disabled:!border-primary disabled:!opacity-75
             tracking-wider font-semibold text-lg text-center"
         >
           {loading ? "Sending..." : "Send"}

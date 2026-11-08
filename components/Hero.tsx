@@ -26,9 +26,9 @@ const Hero = () => {
             {!reducedMotion && <span aria-hidden="true" className="motion-typing"><TypewriterName /></span>}
           </h1>
           <p className="text-base sm:text-lg lg:text-xl text-left">
-            With a background in software development, I focus on improving
-            software quality through systematic testing, problem-solving, and
-            automation.
+            I'm a QA Engineer with a background in software development,
+            focused on improving software quality through testing, data
+            analysis, and automation.
           </p>
           <div className="mt-4">
             <a href="#contact" className="hire-link inline-block px-8 py-3 mb-4 rounded-full text-base-content bg-gradient-to-br from-primary via-secondary to-accent hover:opacity-80 transition-opacity duration-200 w-full sm:w-fit">

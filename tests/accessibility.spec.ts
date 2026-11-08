@@ -257,7 +257,7 @@ test("category buttons expose selection and retain native keyboard activation", 
   await education.press("Space");
   await expect(education).toHaveAttribute("aria-pressed", "true");
   await expect(categories.getByRole("button", { name: "Skills", exact: true })).toHaveAttribute("aria-pressed", "false");
-  await expect(page.getByText("Handong Global University (Pohang, South Korea)", { exact: false })).toBeVisible();
+  await expect(page.getByText("Handong Global University", { exact: true })).toBeVisible();
   const projects = page.getByRole("group", { name: "Project categories" });
   await projects.getByRole("button", { name: "Test", exact: true }).press("Enter");
   await expect(page.locator("#work .card")).toHaveCount(1);
