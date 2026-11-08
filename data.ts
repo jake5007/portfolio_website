@@ -220,8 +220,7 @@ export const workList = [
     title: "Age Calculator",
     desc: "Enter your date of birth to calculate your age.",
     imgSrc: "/images/work/age_calculator.png",
-    gitURL:
-      "https://frontend-mentor-junior-age-calculator-jake5007.vercel.app/",
+    gitURL: "https://github.com/jake5007/age-calculator",
     liveURL:
       "https://frontend-mentor-junior-age-calculator-jake5007.vercel.app/",
   },
