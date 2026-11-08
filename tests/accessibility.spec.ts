@@ -85,6 +85,31 @@ test("skip link, landmarks, headings and native link activation", async ({ page 
   await expect(page.getByRole("link", { name: "LinkedIn profile (opens in a new tab)", exact: true })).toBeVisible();
 });
 
+test("Experience dates sit below each role on mobile and beside roles on desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await load(page);
+  await page.getByRole("group", { name: "About categories" })
+    .getByRole("button", { name: "Experience", exact: true }).click();
+
+  const entries = page.locator("#about ul > li");
+  await expect(entries).toHaveCount(3);
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const entry of await entries.all()) {
+      const role = await entry.locator("span.font-semibold").boundingBox();
+      const date = await entry.locator("span.text-xs").boundingBox();
+      expect(role).not.toBeNull();
+      expect(date).not.toBeNull();
+      if (width < 640) {
+        expect(date!.y, `Date should be below role at ${width}px`).toBeGreaterThanOrEqual(role!.y + role!.height - 1);
+      } else {
+        expect(Math.abs(date!.y - role!.y), `Date should share row at ${width}px`).toBeLessThan(15);
+      }
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  }
+});
+
 test("mobile disclosure supports Space, Escape, destination focus and desktop resize", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 900 });
   await load(page);
