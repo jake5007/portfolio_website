@@ -101,15 +101,15 @@ test("Experience dates sit below each role on mobile and beside roles on desktop
     for (const entry of await entries.all()) {
       const header = entry.locator("div.flex").first();
       await expect(header).toHaveCSS("flex-direction", width < 640 ? "column" : "row");
-      await expect.poll(async () => entry.evaluate((li) => {
+      await expect.poll(async () => entry.evaluate((li, viewportWidth) => {
         const spans = li.querySelectorAll("div.flex > span");
         if (spans.length !== 2) return false;
         const role = spans[0].getBoundingClientRect();
         const date = spans[1].getBoundingClientRect();
-        return width < 640
+        return viewportWidth < 640
           ? date.top >= role.bottom - 1
           : Math.abs(date.top - role.top) < 15;
-      }), { message: `Experience date alignment at ${width}px` }).toBe(true);
+      }, width), { message: `Experience date alignment at ${width}px` }).toBe(true);
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
