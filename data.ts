@@ -60,7 +60,7 @@ export const aboutTabs: AboutTab[] = [
       {
         label: "University",
         value: "Handong Global University",
-        detail: "B.S. in Computer Engineering · B.A. in Management · Pohang, South Korea",
+        detail: "B.S. in Computer Science · B.A. in Management · Pohang, South Korea",
       },
       {
         label: "Certifications",
